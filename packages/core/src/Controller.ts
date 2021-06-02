@@ -1,0 +1,203 @@
+let nextId = 1
+import {raf} from 'rafz'
+import {MixingValue} from './MixingValue'
+import {MixingRef} from './MixingRef'
+import {is, each, flush} from './utils'
+import {
+    Lookup,
+    InferState,
+    AsyncResult,
+    UnknownProps,
+    ControllerUpdate,
+} from './types'
+
+export type ControllerFlushFn<T extends Controller<any> = Controller> = (
+    ctrl: T,
+    queue: ControllerQueue<InferState<T>>
+) => AsyncResult<T>
+
+export interface ControllerQueue<State extends Lookup = Lookup>
+    extends Array<
+        ControllerUpdate<State, any> & { keys: string[] | null }
+    > {}
+
+export class Controller<T extends Lookup = Lookup> {
+    readonly id = nextId++
+    mixings: MixingValue<T> = {} as any
+    ref?: MixingRef
+    queue: any = []
+
+    private _flush?: ControllerFlushFn<this>
+    private _lastAsyncId = 0
+    private _active = new Set<MixingValue>()
+    private _changed = new Set<MixingValue>()
+    private _started = false
+    private _item?: any
+    private _state = {
+        paused: false,
+        pauseQueue: new Set(),
+        resumeQueue: new Set(),
+        timeouts: new Set(),
+    }
+    private _events = {
+        onStart: new Map<any, any>(),
+        onChange: new Map<any, any>(),
+        onRest: new Map<any, any>()
+    }
+
+    constructor(props: any, flush?: any) {
+        this._onFrame = this._onFrame.bind(this)
+        if (flush)
+            this._flush = flush
+        if (props)
+            this.start({default: true, ...props})
+    }
+
+    get item () {
+        return this._item
+    }
+
+    get (): T & UnknownProps {
+        const values: any = {}
+        this.each((mixing, key) => (values[key] = mixing.get()))
+        return values
+    }
+
+    set (values?: Partial<T>) {
+        for (const key in values) {
+            const value = values[key]
+            if (!is.und(value))
+                this.mixings[key].set(value)
+        }
+    }
+
+    resume (keys?: string | string[]) {
+        if (is.und(keys))
+            this.start({pause: false})
+    }
+
+    pause (...args: any) {}
+
+    start (props?: ControllerUpdate<T> | null) {
+        let {queue} = this as any
+        if (props)
+            queue = [].concat(props).map(createUpdate)
+        else
+            this.queue = []
+
+        if (this._flush)
+            return this._flush(this, queue)
+
+        prepareKeys(this, queue)
+        return flushUpdateQueue(this, queue)
+    }
+
+    stop (arg?: boolean, keys?: string | string[]) {
+        if (arg !== !!arg)
+            keys = arg as stirng | string[]
+        if (keys)
+            each([].concat(keys), key => this.mixings[key].pause())
+        else
+            stopAsync(this._state, this._lastAsyncId)
+            each(this.mixings, mixing => mixing.stop(!!arg))
+    }
+
+    update (props?: ControllerUpdate<T> | null) {
+        if (props)
+            this.queue.push(createUpdate(props))
+    }
+
+    _onFrame () {
+        const {onStart, onChange, onRest} = this._events
+        const active = this._active.size > 0
+        const changed = this._changed.size > 0
+        const idle = !active && this._started
+        const values = changed || (idle && onRest.size)? this.get(): null
+
+        if ((active && !this._started) || (changed && !this._started)) {
+            this._started = true
+            flush (onStart, ([onStart, result]) => {
+                result.value = this.get()
+                onStart(result, this, this._item)
+            })
+        }
+
+        if (changed && onChange.size) {
+            flush(onChange, ([onChange, result]) => {
+                result.value = this.get()
+                onChange(result, this, this._item)
+            })
+        }
+
+        if (idle) {
+            this._started = false
+            flush(onRest, ([onRest, result]) => {
+                result.value = values
+                onRest(result,this, this._item)
+            })
+        }
+    }
+
+    eventObserved (event: any) {// MixingValue.Event) {
+        if (event.type == 'change') {
+            this._changed.add(event.parent)
+            if (!event.idle)
+                this._active.add(event.parent)
+        } else if (event.type == 'idle') {
+            this._active.delete(event.parent)
+        } else return
+        raf.onFrame(this._onFrame)
+    }
+}
+
+export function getMixings<T extends Lookup>(
+  ctrl: Controller<Lookup<any>>,
+  props?: ControllerUpdate<T> | ControllerUpdate<T>[]
+) {
+    const mixings = { ...ctrl.mixings }
+    if (props) {
+        each([].concat(props), (props: any) => {
+            if (is.und(props.keys))
+                props = createUpdate(props)
+            if (!is.obj(props.to))
+                props = { ...props, to: undefined }
+            prepareMixings(mixings as any, props, key => {
+                return createMixing(key)
+            })
+        })
+    }
+    setMixings(ctrl, mixings)
+    return mixings
+}
+export function setMixings(
+    ctrl: Controller<Lookup<any>>,
+    mixings: MixingValue<UnknownProps>
+) {
+    for (const key in mixings) {
+        if (!(ctrl.mixings as any)[key]) {
+            (ctrl.mixings as any)[key] = mixings[key]
+            addFluidObserver(mixings[key], ctrl)
+        }
+    }
+}
+
+function createMixing(key: string, observer?: FluidObserver<MixingValue.Event>) {
+    const mixing = new MixingValue()
+    mixing.key = key
+    if (observer)
+        addFluidObserver(mixing, observer)
+    return mixing
+}
+
+function prepareMixings(
+    mixings: MixingValue,
+    props: ControllerQueue[number],
+    create: (key: string) => MixingValue
+) {
+    if (props.keys) {
+        each(props.keys, key => {
+            const mixing = mixings[key] || (mixings[key] = create(key))
+            mixing['_prepareNode'](props)
+        })
+    }
+}
