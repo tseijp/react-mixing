@@ -3,24 +3,23 @@ import {RuleSet} from '../utils'
 
 export type Constructor = any
 
-export interface Options {}
+export interface Attrs {} // TODO
 
-export interface Attrs {}
+export interface Options {} // TODO
 
 export interface Construct extends Function {
     withAttrs (attrs: Attrs): Construct
     withConfig (configs: Options): Construct
 }
 
-export function construct (
+export function construct <Component = any> (
     constructor: Constructor,
     options: Options,
-    ...tags: RuleSet
+    ...tags: RuleSet<Component>
 ): Construct
 
 export function construct (constructor: any, options?: any, ...tags: any[]) {
-    const templateFunction: Construct = (...args: any[]) =>
-        constructor(param(...tags), options, param(...args))
+    const templateFunction: Construct = constructor(options, ...param(...tags))
 
     templateFunction.withAttrs = (attrs) =>
         construct(constructor, {

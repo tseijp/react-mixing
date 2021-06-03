@@ -1,42 +1,17 @@
 import {construct} from './construct'
+import {primitives} from '../utils'
 import {SynthedAudio} from '../models'
 
-const synthed = (...tags: any) => construct(SynthedAudio, {}, ...tags)
+const _synthed = (...tags: any) => construct(SynthedAudio, {}, ...tags)
 
-synthed.Analyser = synthed(AnalyserNode)
+type BaseStyled = typeof _synthed
 
-synthed.BiquadFilter = synthed(BiquadFilterNode)
+const synthed = _synthed as BaseStyled & {
+    [key in typeof primitives[number]]: ReturnType<BaseStyled>
+}
 
-synthed.Buffer = synthed(AudioBuffer)
-
-synthed.BufferSource = synthed(AudioBufferSourceNode)
-
-synthed.ConstantSource = synthed(ConstantSourceNode)
-
-synthed.ChannelMerger = synthed(ChannelMergerNode)
-
-synthed.ChannelSplitter = synthed(ChannelSplitterNode)
-
-synthed.Convolver = synthed(ConvolverNode)
-
-synthed.Delay = synthed(DelayNode)
-
-synthed.DynamicsCompressor = synthed(DynamicsCompressorNode)
-
-synthed.Gain = synthed(GainNode)
-
-synthed.IIRFilter = synthed(IIRFilterNode)
-
-synthed.Oscillator = synthed(OscillatorNode)
-
-synthed.Panner = synthed(PannerNode)
-
-synthed.PeriodicWave = synthed(PeriodicWave)
-
-synthed.ScriptProcessor = synthed(ScriptProcessorNode)
-
-synthed.StereoPanner = synthed(StereoPannerNode)
-
-synthed.waveShaper = synthed(WaveShaperNode)
+primitives.forEach(primitive => {
+    synthed[primitive] = _synthed(primitive)
+})
 
 export { synthed }

@@ -4,13 +4,13 @@
 import { is } from '../../utils'
 import {Falsy} from '../../types'
 
-export type Flat<T=any> = T | Flat<T>[]
+export type Flat<T = any> = T | T[]
 
-export type Rule<T=any> = Falsy | Rule<T>[]
+export type Rule<T = any> = Falsy | T | T[] | Rule<T>[]
 
-export type RuleSet<T=any> = Rule<T>[]
+export type RuleSet<T = any> = Rule<T>[]
 
-export type FlatSet<T=any> = Flat<T>[]
+export type FlatSet<T = any> = Flat<T>[]
 
 export function flatten (
     chunk: Falsy | string,

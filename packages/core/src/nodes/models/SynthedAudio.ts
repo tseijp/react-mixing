@@ -1,87 +1,80 @@
 import React from 'react'
 import {AudioSynth} from './AudioSynth'
-import {
-    construct,
-    Attrs,
-    Options,
-    Construct,
-} from '../constructors'
-import {resolveAttrs, FlatSet} from '../utils'
 import {is} from '../../utils'
+import {FlatSet} from '../utils'
+import {Construct, Options} from '../constructors'
 
-export interface SynthedAudio extends Construct {
-    attrs: Attr[],
-    config: Options,
-    audioNode: any,
-    audioSynth: AudioSynth,
-}
+const $node: any = Symbol.for('Synthed:node')
 
 function useSynthedAudio (
-    component: SynthedAudio,
+    component: Component,
     props: object,
-    ref: React.Ref<Element>,
-): React.ReactNode
+    ref?: React.Ref<Element>,
+): null | JSX.Element
 
-function useSynthedAudio (component: any, props: any, ref: any) {
-    const {children} = props
-    // this.connect(other)
-    // if (children[node]) {
-    //   if (reverce)
-    //     children[node].connect(this[node])
-    //   else
-    //     this.connect(children[node])
-    // }
-    const wrappedChildren = React.useMemo(() => {
-        return []
+function useSynthedAudio (Component: any, props: any, ref: any) {
+    const {children, reverce, ...other} = props
+    const next = React.useMemo(() => {
+        this.connect(other)
+        return React.Children.map(children, child => {
+            if (child[$node]) {
+                if (reverce)
+                    child[$node].connect(this[$node])
+                else
+                    this.connect(child[$node])
+            }
+            return child
+        })
     }, [children])
+    return React.createElement(Component, {ref}, next)
+}
 
-    return React.createElement()
+
+export interface Component extends Construct {
+    attrs: Attr[],
+    config: Options,
+    audioSynth: AudioSynth,
+    displayName?: string | null,
 }
 
 export function SynthedAudio (
-    tags: FlatSet,
+    tags: FlatSet<Component>,
     options: Options,
-    args: FlatSet,
-): SynthedAudio
+    args: FlatSet<Component>,
+): Component
 
-// tag: main
-// arg: input
-
-export function SynthedAudio (tags: any, options: any, args: any) {
-    const [tag] = tags, [arg] = args,
-        isTagSynthedAudio = !is.str(tag) && is.str(tag?.parsedId),
-        isArgSynthedAudio = !is.str(arg) && is.str(arg?.parsedId),
-        attrs = isTagSynthedAudio && tag.attrs
+export function SynthedAudio (options: any, ...tags: any) {
+    const [tag] = tags,
+        isSynthed = !is.str(tag) && is.str(tag?.parsedId),
+        displayName = getDisplayName(tag) || 'Anonymous',
+        attrs = isSynthed && tag.attrs
             ? Array.prototype.concat(tag.attrs, options.attrs).filter(Boolean)
             : options.attrs || []
 
     const audioSynth = new AudioSynth (
-       !isTagSynthedAudio && tags,
-        isTagSynthedAudio && tag.audioSynth,
-        isArgSynthedAudio && arg.audioSynth,
-       !isArgSynthedAudio && args
+       !isSynthed && tags,
+        isSynthed && tag.audioSynth,
     )
 
-    const audioNode = new AudioNode()
-
-    let SynthedAudio: SynthedAudio
+    let Component: Component
 
     function render (props: any, ref: any) {
-        return useSynthedAudio(SynthedAudio, props, ref)
+        return useSynthedAudio(Component, props, ref)
     }
 
-    SynthedAudio = React.forwardRef(render) as SynthedAudio
+    Component = React.forwardRef(render) as unknown as Component
+    Component.attrs = attrs
+    Component.config = options
+    Component.audioSynth = audioSynth
+    Component.displayName = displayName
+    Component.toString = () => `.${Component.displayName}`;
 
-    SynthedAudio.attrs = attrs
-    SynthedAudio.config = options
-    SynthedAudio.audioNode = audioNode
-    SynthedAudio.audioSynth = audioSynth
-
-    SynthedAudio.withAttrs = (attrs: Attrs) =>
-        construct(SynthedAudio, options, args).withAttrs(attrs)
-
-    SynthedAudio.withConfig = (configs: Options) =>
-        construct(SynthedAudio, options, args).withConfig(configs)
-
-    return SynthedAudio
+    return Component
 }
+
+const getDisplayName = (arg: any) =>
+    is.str(arg)
+        ? arg
+        : is.str(arg?.displayName)
+        ? arg.displayName
+        : (is.fun(arg) && arg.name) || null

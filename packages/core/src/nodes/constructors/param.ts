@@ -6,12 +6,12 @@ import {
     RuleSet
 } from '../utils'
 
-export function param <T = any> (...rules: RuleSet): FlatSet<T>
+export function param <Component = any> (...rules: RuleSet): FlatSet<Component>
 
-export function param <T = any> (
+export function param <Component = any> (
     rules: string[],
     ...interpolations: any[]
-): FlatSet<T>
+): FlatSet<Component>
 
 export function param (rules?: any, ...interpolations: any) {
     if (is.fun(rules) || is.obj(rules))

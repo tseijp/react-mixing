@@ -14,12 +14,14 @@ export function useForceUpdate() {
 }
 
 declare const window: any
+
 export const useLayoutEffect =
     typeof window !== 'undefined' && window.document?.createElement
         ? React.useLayoutEffect
         : React.useEffect
 
 const emptyDeps: any[] = []
+
 export function useOnce (effect: React.EffectCallback) {
     return useEffect(effect, emptyDeps)
 }

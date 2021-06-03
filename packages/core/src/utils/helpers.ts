@@ -2,16 +2,20 @@
 // https://github.com/pmndrs/react-spring/blob/master/packages/shared/src/helpers.ts
 
 type EachFn<Value, Key, This> = (this: This, value: Value, key: Key) => void
+
 type Eachable<Value = any, Key = any, This = any> = {
     forEach(cb: EachFn<Value, Key, This>, ctx?: This): void
 }
+
 export const each = <Value, Key, This>(
     obj: Eachable<Value, Key, This>,
     fn: EachFn<Value, Key, This>
 ) => obj.forEach(fn)
 
 export function flush<P, T>(queue: Map<P, T>, iterator: (entry: [P, T]) => void): void
+
 export function flush<T>(queue: Set<T>, iterator: (value: T) => void): void
+
 export function flush(queue: any, iterator: any) {
     if (queue.size) {
         const items = Array.from(queue)
@@ -19,7 +23,6 @@ export function flush(queue: any, iterator: any) {
         each(items, iterator)
     }
 }
-
 
 const is = (a: any, b?: any, ...other: any): boolean => {
     if (other.length > 0) return is(a, b) && is(b, ...other)
