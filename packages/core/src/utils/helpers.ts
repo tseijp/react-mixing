@@ -24,6 +24,29 @@ export function flush(queue: any, iterator: any) {
     }
 }
 
+// export function eachProp<T extends object, This>(
+//     obj: T,
+//     fn: EachFn<This, string, T extends any[]? T[number]: T[keyof T]>,
+//     ctx?: This
+// ) {
+//     for (const key in obj)
+//         fn.call(ctx as any, obj[key] as any, key)
+// }
+
+export function eachProp<T extends object, This>(
+  obj: T,
+  fn: (
+    this: This,
+    value: T extends any[] ? T[number] : T[keyof T],
+    key: string
+  ) => void,
+  ctx?: This
+) {
+  for (const key in obj) {
+    fn.call(ctx as any, obj[key] as any, key)
+  }
+}
+
 const is = (a: any, b?: any, ...other: any): boolean => {
     if (other.length > 0) return is(a, b) && is(b, ...other)
     if (typeof a !== typeof b) return false

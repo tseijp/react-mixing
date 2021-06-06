@@ -169,6 +169,7 @@ export function getMixings<T extends Lookup>(
     setMixings(ctrl, mixings)
     return mixings
 }
+
 export function setMixings(
     ctrl: Controller<Lookup<any>>,
     mixings: MixingValue<UnknownProps>

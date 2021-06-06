@@ -1,7 +1,6 @@
-import {param} from './param'
-import {RuleSet} from '../utils'
-
 export type Constructor = any
+
+export type Tag<T = any> = string | T // TODO
 
 export interface Attrs {} // TODO
 
@@ -15,11 +14,11 @@ export interface Construct extends Function {
 export function construct <Component = any> (
     constructor: Constructor,
     options: Options,
-    ...tags: RuleSet<Component>
+    ...tags: Tag[]
 ): Construct
 
-export function construct (constructor: any, options?: any, ...tags: any[]) {
-    const templateFunction: Construct = constructor(options, ...param(...tags))
+export function construct (constructor: any, options: any={}, ...tags: any[]) {
+    const templateFunction: Construct = constructor(options, tags)
 
     templateFunction.withAttrs = (attrs) =>
         construct(constructor, {

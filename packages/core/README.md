@@ -1,6 +1,83 @@
-# @react-mixing/core
+# react-audio
+
+[![ version ](
+    https://img.shields.io/npm/v/react-mixing)](
+    https://npmjs.com/package/react-mixing)
+[![ Downloads ](
+    https://img.shields.io/npm/dm/react-mixing.svg)](
+    https://npmjs.com/package/react-mixing)
+[![ jsDelivr ](
+    https://badgen.net/jsdelivr/hits/npm/react-mixing)](
+    https://www.jsdelivr.com/package/npm/react-mixing)
+[![ minified size ](
+    https://badgen.net/bundlephobia/minzip/react-mixing)](
+    https://bundlephobia.com/result?p=react-mixing@latest)
+[![ types includes ](
+    https://badgen.net/npm/types/react-mixing)](
+    https://www.npmjs.com/package/react-mixing)
+[![ license ](
+    https://badgen.net/npm/license/react-mixing)](
+    https://www.npmjs.com/package/react-mixing)
+
+### Installation
+
+```shell
+npm install react-mixing
+```
+
+### Quick started
+
+```shell
+git clone https://github.com/tseijp/react-mixing
+cd react-mixing
+cd examples
+yarn i
+yarn start
+```
+
+- open browser and visit [localhost:3000](http://localhost:3000)
+- Now you can go to our [demo](http://tsei.jp/rmix), and try its usage.
+
+
+### Documentation and Examples
+
+More info about the project can be found [here](https://tsei.jp/rmix/docs/intro.md).
+
+Examples and tutorials can be found [here](https://tsei.jp/rmix/examples/intro.md).
+
+<br/>
+<hr/>
+</br/>
+
+
+### What does it look like?
+
+```js
+import React from 'react'
+import {synthed, useMixing} from 'react-mixing'
+
+export function App () {
+  const ref = React.useRef()
+
+  const [mix, set] = useMixing({high: .6, middle: .3, low: 0}, [])
+
+  return (
+    <input onChange={e => set({fader: e.value})}/>
+      <audio src="https://..."/>
+      <synthed.Oscillator to={mix} />
+    </input>
+  )
+}
+```
+
+## Recipes
+
+<details>
+<summary>
 
 ### Components
+
+</summary>
 
 ```js
 const [toggle, set] = useState(1)
@@ -18,31 +95,21 @@ render (
 )
 ```
 
-```js
-const [toggle, set] = useState(false)
-render (
-  <synthed.Oscillator>
-    {from =>
-      <Mixing
-        high={{toggle? 1:.6}}
-         mid={{toggle? 1:.3}}
-         low={{toggle? 1: 0}}/>
-    }
-  </synthed.Ocsillator>
-)
-```
+</details>
 
-<br/><br/><hr/><br/><br/>
 
-# @react-mixing/hook
+
+<details>
+<summary>
 
 ### useMixing
 
-```js
-import {synthed, useMixing} from 'react-mixing'
-```
+</summary>
+
 
 ```js
+import {synthed, useMixing} from 'react-mixing'
+
 const [mix, set] = useMixing({high: .6, middle: .3, low: 0}, [])
 
 render (
@@ -52,7 +119,14 @@ render (
 )
 ```
 
+</details>
+
+<details>
+<summary>
+
 ### useMixings
+
+</summary>
 
 ```js
 import {synthed, useMixings} from 'react-mixing'
@@ -63,55 +137,40 @@ render ({mixs.map(mix =>
 )})
 ```
 
-<br/><br/><hr/><br/><br/>
+</details>
 
-# @react-mixing/node
+<details>
+<summary>
+
+### @react-mixing/node
+
+</summary>
 
 ```js
-// -> Delay(<-> feedback) -> [dry, wet] ->
-const Delay  = ({value}) => (
-  <synthed.Delay from={value}>
-    <synthed.Gain from={value} destination/>
-    <synthed.Gain from={value} destination/>
-    <synthed.Gain from={value} feedback/>
-  </synthed.Delay>
-)
+import s from 'react-mixing'
 
-const Filter = ({to, children}) => (
-  <synthed.BiquadFilter type="lowpass">
-    {children}
-  </synthed.BiquadFilter>
-)
-
-// [vco] -> mixer -> filter -> volume -> delay -> dest
-const App = () => {
 const [toggle, set] = useState(false)
 
 render (
-  <synthed.Oscillator immediate={toggle}/>
-    {from =>
-      <synthed.Oscillator immediate={toggle}/>
-        {to =>
-          <Mixing from={from} to={to}> // ???
-            {mixing =>
-              <Filter from={mixing}>
-                <synthed.Gain value={.5}>
-                  {value =>  <Delay value={value}/>}
-                </synthed.Gain>
-              </Filter>
-            }
-          </Mixing>
-        }
-      </synthed.Oscillator>
-    }
-  </synthed.Oscillator>
+  <button onClick={() => set(p => !p)}>
+    {toggle? 'Stop': 'Start'}
+    <s.Oscillator immediate>
+      <s.Filter row={0} mid={.5}/>
+        <s.Gain value={toggle} destination>
+      </s.Filter>
+    </s.Oscillator>
+  </button>
 )
-}
 ```
 
-<br/><br/><hr/><br/><br/>
+</details>
 
-# @react-mixing/todo
+<details>
+<summary>
+
+## @react-mixing/todo
+
+</summary>
 
 ### with React Spring
 

@@ -1,8 +1,8 @@
 import {construct} from './construct'
 import {primitives} from '../utils'
-import {SynthedAudio} from '../models'
+import {withSynthed} from '../withSynthed'
 
-const _synthed = (...tags: any) => construct(SynthedAudio, {}, ...tags)
+const _synthed = (...tags: any) => construct(withSynthed, {}, ...tags)
 
 type BaseStyled = typeof _synthed
 

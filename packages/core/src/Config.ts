@@ -1,4 +1,4 @@
-export const defaultSynthConfig = {
+export const defaultConfig = {
     rate: 1,
     pitch: 1,
     volume: 1,
@@ -6,13 +6,13 @@ export const defaultSynthConfig = {
     lang: 'en'
 }
 
-export class SynthConfig {
+export class Config {
     rate!: number
     pitch!: number
     volume!: number
     voice!: number
     lang!: string
     constructor() {
-        Object.assign(this, defaultSynthConfig)
+        Object.assign(this, defaultConfig)
     }
 }
