@@ -2,14 +2,17 @@ let nextId = 1
 import {raf} from 'rafz'
 import {MixingValue} from './MixingValue'
 import {MixingRef} from './MixingRef'
-import {is, each, flush} from './utils'
+import {is, each, eachProp, flush} from './utils'
 import {
     Lookup,
     InferState,
     AsyncResult,
     UnknownProps,
+    MixingValues,
     ControllerUpdate,
 } from './types'
+
+const concat = Array.prototype.concat
 
 export type ControllerFlushFn<T extends Controller<any> = Controller> = (
     ctrl: T,
@@ -23,7 +26,7 @@ export interface ControllerQueue<State extends Lookup = Lookup>
 
 export class Controller<T extends Lookup = Lookup> {
     readonly id = nextId++
-    mixings: MixingValue<T> = {} as any
+    mixings: MixingValues = {}
     ref?: MixingRef
     queue: any = []
 
@@ -59,7 +62,7 @@ export class Controller<T extends Lookup = Lookup> {
 
     get (): T & UnknownProps {
         const values: any = {}
-        this.each((mixing, key) => (values[key] = mixing.get()))
+        eachProp(this.mixings, (mixing, key) => (values[key] = mixing.get()))
         return values
     }
 
@@ -71,6 +74,11 @@ export class Controller<T extends Lookup = Lookup> {
         }
     }
 
+    // each (eachFn) {
+    //     each(this.queue, eachFn)
+    //     return this
+    // }
+
     resume (keys?: string | string[]) {
         if (is.und(keys))
             this.start({pause: false})
@@ -81,7 +89,7 @@ export class Controller<T extends Lookup = Lookup> {
     start (props?: ControllerUpdate<T> | null) {
         let {queue} = this as any
         if (props)
-            queue = [].concat(props).map(createUpdate)
+            queue = concat(props)//.map(createUpdate)
         else
             this.queue = []
 
@@ -96,7 +104,7 @@ export class Controller<T extends Lookup = Lookup> {
         if (arg !== !!arg)
             keys = arg as stirng | string[]
         if (keys)
-            each([].concat(keys), key => this.mixings[key].pause())
+            each(concat(keys), key => this.mixings[key].pause())
         else
             stopAsync(this._state, this._lastAsyncId)
             each(this.mixings, mixing => mixing.stop(!!arg))
@@ -156,7 +164,7 @@ export function getMixings<T extends Lookup>(
 ) {
     const mixings = { ...ctrl.mixings }
     if (props) {
-        each([].concat(props), (props: any) => {
+        each(concat(props), (props: any) => {
             if (is.und(props.keys))
                 props = createUpdate(props)
             if (!is.obj(props.to))
@@ -202,3 +210,5 @@ function prepareMixings(
         })
     }
 }
+
+function createUpdate () {}

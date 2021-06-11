@@ -1,10 +1,10 @@
 import type {MixingValue} from '../MixingValue'
-import type {SynthConfig} from '../SynthConfig'
+import type {Config} from '../Config'
 import type {Lookup, Any, Readable} from './utils'
 
-type FluidValue = any
+type FluidValue = any // TODO
 
-export type MixingConfig = Partial<SynthConfig>
+export type MixingConfig = Partial<Config>
 
 export interface AnimationResult<T extends Readable = any> {
     value: T extends Readable<infer U> ? U : never

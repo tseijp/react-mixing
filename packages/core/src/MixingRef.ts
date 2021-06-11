@@ -13,7 +13,7 @@ export interface MixingRef<T extends Lookup = Lookup>{
     update(props: ControllerUpdate<T>): this
     start(): any
     stop(): this
-    _getProps(
+    _getProps (
         arg: ControllerUpdate<T> | {
             (i: number, ctrl: Controller<T>): ControllerUpdate<T>
         },
@@ -41,7 +41,7 @@ export function MixingRef<T extends Lookup = Lookup>() {
     ref.current = current
 
     ref.each = (eachFn) => {
-        each(current, eachFn)
+        each(current as any[], eachFn)
         return this
     }
 
@@ -55,17 +55,17 @@ export function MixingRef<T extends Lookup = Lookup>() {
         if (~i) current.splice(i, 1)
     }
 
-    ref.set = (...args: any[]) => ref.each(ctrl => ctrl.set(...args))
+    ref.set = (...args) => ref.each(ctrl => ctrl.set(...args))
 
-    ref.pause = (...args: any[]) => ref.each(ctrl => ctrl.pause(...args))
+    ref.pause = (...args) => ref.each(ctrl => ctrl.pause(...args))
 
-    ref.resume = (...args: any[]) => ref.each(ctrl => ctrl.resume(...args))
+    ref.resume = (...args) => ref.each(ctrl => ctrl.resume(...args))
 
-    ref.start = (...args: any[]) => ref.each(ctrl => ctrl.start(...args))
+    ref.start = (...args) => ref.each(ctrl => ctrl.start(...args))
 
-    ref.stop = (...args: any[]) => ref.each(ctrl => ctrl.stop(...args))
+    ref.stop = (...args) => ref.each(ctrl => ctrl.stop(...args))
 
-    ref.update = (...args: any[]) => ref.each(ctrl => ctrl.update(...args))
+    ref.update = (...args) => ref.each(ctrl => ctrl.update(...args))
 
     ref._getProps = (arg, ctrl, index) => {
         return typeof arg === "function"? arg(index, ctrl): arg

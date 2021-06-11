@@ -17,7 +17,7 @@ export type MixingsUpdate<State extends Lookup = UnknownProps> =
   | OneOrMore<ControllerUpdate<State>>
   | ((index: number, ctrl: Controller<State>) => ControllerUpdate<State> | null)
 
-export interface MixingProps<T = any> {//extends SynthProps<T> {
+export interface MixingProps<T = any> {//extends MixingProps<T> {
     from?: GoalValue<T>
     loop?: LoopProp<MixingUpdate>
     onProps?: (...args: any[]) => any
@@ -65,7 +65,7 @@ export type ControllerUpdate<
 export interface ControllerProps<
     State extends Lookup = Lookup,
     Item = undefined
-> extends SynthProps<State> {
+> extends MixingProps<State> {
     ref?: MixingRef<State>
     from?: GoalValues<State> | Falsy
     loop?: LoopProp<ControllerUpdate>

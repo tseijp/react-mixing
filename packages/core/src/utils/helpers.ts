@@ -1,7 +1,7 @@
 // ref
 // https://github.com/pmndrs/react-spring/blob/master/packages/shared/src/helpers.ts
 
-type EachFn<Value, Key, This> = (this: This, value: Value, key: Key) => void
+type EachFn<Value, Key, This> = (value: Value, key: Key, ctx: This) => void
 
 type Eachable<Value = any, Key = any, This = any> = {
     forEach(cb: EachFn<Value, Key, This>, ctx?: This): void
@@ -24,14 +24,14 @@ export function flush(queue: any, iterator: any) {
     }
 }
 
-// export function eachProp<T extends object, This>(
-//     obj: T,
-//     fn: EachFn<This, string, T extends any[]? T[number]: T[keyof T]>,
-//     ctx?: This
-// ) {
-//     for (const key in obj)
-//         fn.call(ctx as any, obj[key] as any, key)
-// }
+const $get = Symbol.for('FluidValue.get')
+
+export const defineHidden = (obj: any, key: any, value: any) =>
+    Object.defineProperty(obj, key, { value, writable: true, configurable: true })
+
+
+export const setFluidGetter = (target: object, get: () => any) =>
+    defineHidden(target, $get, get)
 
 export function eachProp<T extends object, This>(
   obj: T,
@@ -42,9 +42,8 @@ export function eachProp<T extends object, This>(
   ) => void,
   ctx?: This
 ) {
-  for (const key in obj) {
-    fn.call(ctx as any, obj[key] as any, key)
-  }
+    for (const key in obj)
+        fn.call(ctx as any, obj[key] as any, key)
 }
 
 const is = (a: any, b?: any, ...other: any): boolean => {

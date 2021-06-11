@@ -1,17 +1,10 @@
 import {Lookup} from '../types'
 import {is, each, eachProp} from '../utils'
 import {SynthedNode} from './SynthedNode'
-import {Synthed, isSynthed } from './Synthed'
+import {Synthed, isSynthed} from './Synthed'
 
 export class SynthedNodes extends Synthed {
     nodes!: SynthedNode[]
-
-    constructor () {
-        super()
-        this.get = this.get.bind(this)
-        this.set = this.set.bind(this)
-        this.reset = this.reset.bind(this)
-    }
 
     get (synthed?: boolean) {
         const nodes: Lookup = {}
@@ -24,31 +17,31 @@ export class SynthedNodes extends Synthed {
         return nodes
     }
 
-    set (ctx: any, nodes: any[]) {
-        this.nodes = is.arr(nodes[0])
-            ? makeFromArray(ctx, nodes)
-            : makeFromObject(ctx, nodes)
+    set (...args: any[]) {
+        this.nodes = is.arr(args[0])
+            ? makeFromArray(...args)
+            : makeFromObject(args)
         return this
     }
 
-    reset() {
+    reset () {
         if (this.nodes)
             each(this.nodes, node => node.reset())
         return this
     }
 }
 
-function makeFromArray (_ctx: any, nodes: any[]): SynthedNode[] {
+function makeFromArray (...args: any[]): SynthedNode[] {
     const nodeSet = new Set<SynthedNode>()
-    if (this.nodes.length == nodes.length)
-        each(nodes, node => nodeSet.add(node))
+    if (this.nodes.length == args.length)
+        each(args, node => nodeSet.add(node))
     return Array.from(nodeSet)
 }
 
-function makeFromObject(ctx: any, nodes: Lookup[]): SynthedNode[] {
+function makeFromObject(args: Lookup[]): SynthedNode[] {
     const nodeSet = new Set<SynthedNode>()
-    eachProp(nodes, (_, node: any) => {
-        const payload = makeFromObject(ctx, node)
+    eachProp(args, (_, arg: any) => {
+        const payload = makeFromObject(arg)
         each(payload, node => nodeSet.add(node))
     }, nodeSet)
     return Array.from(nodeSet)

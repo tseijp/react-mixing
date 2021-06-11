@@ -1,4 +1,4 @@
-# react-audio
+# react-mixing
 
 [![ version ](
     https://img.shields.io/npm/v/react-mixing)](
@@ -57,14 +57,14 @@ import React from 'react'
 import {synthed, useMixing} from 'react-mixing'
 
 export function App () {
-  const ref = React.useRef()
+  const from = React.useRef()
 
-  const [mix, set] = useMixing({high: .6, middle: .3, low: 0}, [])
+  const [mix, set] = useMixing({from, high: .6, middle: .3, low: 0}, [])
 
   return (
     <input onChange={e => set({fader: e.value})}/>
-      <audio src="https://..."/>
-      <synthed.Oscillator to={mix} />
+      <audio ref={from} src="..."/>
+      <synthed.Filter to={mix} />
     </input>
   )
 }

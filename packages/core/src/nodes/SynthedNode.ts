@@ -1,64 +1,52 @@
 import {is, each} from '../utils'
-import {Synthed} from './Synthed'
-export class SynthedNode<T = any> extends Synthed<T> {
-    node?: AudioNode
-    context?: AudioContext
-    parents: SynthedNode<T>[] = []
-    calledStop: boolean = false
-    calledStart: boolean = false
+import {Synthed, setSynthed} from './Synthed'
 
-    done = true
-    elapsedTime = 0
-    lastPosition = 0
-    durationProgress = 0
+export class SynthedNode<T = any> extends Synthed<AudioNode> {
+    _ctx?: AudioContext
+    _node?: AudioNode
+    parents = new Set<SynthedNode<T>>()
 
     constructor () {
         super()
-        this.get = this.get.bind(this)
-        this.set = this.set.bind(this)
-        this.reset = this.reset.bind(this)
+        setSynthed(this, this)
     }
 
     get () {
-        return this.node as any
+        return this._node
     }
 
-    set (ctx: any, ...tags: any[]) {
-        const [tag, ...args] = tags
-        if (ctx || this.parents.length)
-            this.context = ctx || this.parents?.find(parent => parent.context)
-        if (is.str(tag) && is.fun(ctx[`create${tag}`]))
-            this.node = ctx[`create${tag}`]()
-        if (is.fun(tag))
-            this.node = tag(...args)
-        if (this.parents && this.node)
-            each(this.parents, parent => parent.node?.connect(this.node!))
+    set (tag: any, ...args: any[]) {
+        if (is.str(tag)) this._node = (this._ctx as any || {})[`create${tag}`](...args)
+        if (is.fun(tag)) this._node = tag(...args)
+        if (this._node) each(this.parents, p => p._node?.connect(this._node!))
         return this
     }
 
     reset () {
-        this.done = false
-        if (is.num(this.node)) {
-            this.elapsedTime = 0
-            this.durationProgress = 0
-            this.lastPosition = this.node
-        }
+        if (this._node)
+            each(this.parents, p => p._node?.disconnect(this._node!))
         return this
     }
 
-    start () {
-        if (!this.calledStop && is.fun((this.node as any)?.start)) {
-            (this.node as any)?.start()
-            this.calledStart = true
-        }
-        return this
+    get context () {
+        return this._ctx || Array.from(this.parents).find(p => p.context)
     }
 
-    stop () {
-        if (this.calledStart && is.fun((this.node as any)?.stop)) {
-            (this.node as any)?.stop()
-            this.calledStop = true
-        }
-        return this
+    set context (ctx: any) {
+        this._ctx = ctx || this.context || new AudioContext()
+    }
+
+    destinate (destination: boolean) {
+        const {_node, _ctx} = this
+        if (!_node || !_ctx || !destination) return
+        _node.connect(_ctx.destination)
+        return () => _node.disconnect(_ctx.destination)
+    }
+
+    immediate (immediate: boolean) {
+        const {_node, _ctx} = this
+        if (_ctx && _ctx.state !== 'running')
+            _ctx.resume();
+        (_node as any || {})[immediate?'start': 'stop']?.()
     }
 }

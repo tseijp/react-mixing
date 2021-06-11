@@ -34,4 +34,17 @@ export const primitives = [
     "StereoPanner", // StereoPannerNode
 
     "WaveShaper", // WaveShaperNode
+
+    "MediaElementSource", // MediaElementAudioSourceNode
+
+    "MediaStreamSource", // MediaStreamAudioSourceNode
+
+    "MediaStreamDestination", // MediaStreamAudioDestinationNode
+
+    "MediaStreamTrackSource", // MediaStreamAudioSourceNode
+    /**
+     * "ScheduledSource", // AudioScheduledSourceNode
+     *
+     * "Worklet", // AudioWorkletNode
+     */
 ]

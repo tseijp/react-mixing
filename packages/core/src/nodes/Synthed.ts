@@ -1,12 +1,20 @@
+import {defineHidden} from '../utils'
+
 const $node: any = Symbol.for('Synthed:node')
 
-export const isSynthed = <T = any>(node: any): node is Synthed<T> =>
-    !!node && node[$node] === node
+export const isSynthed = <T = any>(value: any): value is Synthed<T> =>
+    !!value && value[$node] === value
+
+export const getSynthed = <T = any>(owner: any): Synthed<T> | undefined =>
+    owner && owner[$node]
+
+export const setSynthed = <T = any>(owner: any, node: Synthed<T>) =>
+    defineHidden(owner, $node, node)
 
 export abstract class Synthed <T = any>{
-    abstract get(synthed?: boolean): T | undefined
+    abstract get (synthed?: boolean): T | undefined
 
-    abstract set(ctx: AudioNode, ...tags: T[]): this
+    abstract set (...tags: any[]): this
 
-    abstract reset(goal?: T): this
+    abstract reset (goal?: any): this
 }

@@ -2,30 +2,33 @@
 // https://developer.mozilla.org/ja/docs/Web/API/MixingSynthesis
 import {is} from './utils'
 import {raf} from 'rafz'
-import {Synth} from './Synth'
-import {SynthValue} from './SynthValue'
 import {
     Lookup,
     MixingProps,
     MixingUpdate,
 } from './types'
+import {FrameValue} from './FrameValue'
+import {Synthesis} from './Synthesis'
 
-export class MixingValue <T extends Lookup = Lookup> extends SynthValue<T> {
+export class MixingValue <T extends Lookup = Lookup> extends FrameValue<T> {
     key?: string
-    synth = new Synth()
+    idle = false
+    synthesis = new Synthesis()
     queue: MixingUpdate<T>[] = []
     defaultProps = {}
+
     readonly _state = {
         paused: false,
         pausedQueue: new Set(),
         resumeQueue: new Set(),
         timeouts: new Set()
     }
-    readonly _pendingCalls = new Set<any>()
-    readonly _priority = 0
-    readonly _lastToId = 0
-    readonly _lastCallId = 0
-    readonly _memoizedDuration = 0
+
+    protected _priority = 0
+    protected _pendingCalls = new Set<any>()
+    protected _lastToId = 0
+    protected _lastCallId = 0
+    protected _memoizedDuration = 0
 
     constructor (arg1: any, arg2: any) {
         super()
@@ -36,15 +39,8 @@ export class MixingValue <T extends Lookup = Lookup> extends SynthValue<T> {
             this.start(props)
         }
     }
-    // get goal (): T {return}
-    // get velocity () {return}
 
-    advance () {
-        let idle = true
-        let changed = false
-        // const  = this.esis
-        // let {config, toValues} =
-    }
+    advance () {}
 
     set () {
         raf.batchedUpdates(() => {
@@ -65,11 +61,11 @@ export class MixingValue <T extends Lookup = Lookup> extends SynthValue<T> {
 
     //!
     finish () {
-        const { to, config } = this.synth
+        const { to, config } = this.synthesis
         raf.batchedUpdates(() => {
             this._onStart()
-            if (!config.decay)
-                this._set(to, false)
+            // if (!config.decay)
+            //     this._set(to, false)
             this._stop()
         })
         return this
@@ -90,9 +86,11 @@ export class MixingValue <T extends Lookup = Lookup> extends SynthValue<T> {
     }
 
     stop (cancel=false) {
+        return this
     }
 
     reset (reset=true) {
+        return this
     }
 
     eventObserved(event: any) {
