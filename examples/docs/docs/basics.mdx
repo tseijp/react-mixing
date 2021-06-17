@@ -1,0 +1,83 @@
+---
+sidebar_position: 2
+sidebar_label: Basics
+---
+The basic mixing is useMixing,
+but the same concept applies to all animation primitives.
+Let's have a look...
+
+First, you fetch your imports
+
+```jsx
+import { synthed, useMixing } from 'react-mixing'
+```
+
+Next, define your mixing
+
+```jsx
+const props = useMixing({ from: {value: 1}, to: {value: 1} })
+```
+
+Finally, tie the animated values to your view
+
+```jsx
+render (
+  <synthed.Gain param={props}>
+    <synthed.Dist />
+  </synthed.Gain>
+)
+```
+
+```jsx
+// React Mixing
+const SynthedGain = synthed(GainNode)
+
+// React-native
+const AnimatedView = animated(View)
+
+// styled-components, emotion, etc.
+const AnimatedHeader = styled(animated.h1)`
+  ...;
+`
+```
+
+## Up-front interpolation
+Mixings take pretty much everything, they don't just handle numbers.
+
+```jsx
+const props = useMixing({
+  vector: [0, 10, 30]
+})
+```
+
+### Shorthand audio params
+
+name | args
+:-|:-
+value | number
+maxValue | number
+minValue | number
+defaultValue | number
+
+
+name | args
+:-|:-
+setValueAtTime | (value, startTime): AudioParam
+linearRampToValueAtTime | (value, endTime): AudioParam
+exponentialRampToValueAtTime | (value, endTime): AudioParam
+setTargetAtTime | (target, startTime, timeConstant): AudioParam
+setValueCurveAtTime | (values, startTime, duration): AudioParam
+cancelScheduledValues | (startTime): AudioParam
+cancelAndHoldAtTime | (cancelTime): AudioParam
+
+
+name| args
+:-|:-
+onEnd | (event): void
+onError | (event): void
+onMark | (event): void
+onPause | (event): void
+onResume | (event): void
+onStart | (event): void
+onChanged | (event): void
+onBoundary | (event): void

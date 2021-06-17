@@ -1,0 +1,70 @@
+---
+sidebar_position: 1
+sidebar_label: Mixing
+---
+
+# Mixing
+
+## Overview
+
+```jsx
+import { Mixing, animated } from 'react-mixing'
+
+<Mixing low={toggle ? 1 : 0}>
+  {styles => ...}
+</Mixing>
+```
+
+```jsx
+const mixingRef = new MixingRef()
+
+mixingRef.start({
+  to: {
+    opacity: 1
+  }
+})
+```
+
+```jsx
+<Mixing ref={mixingRef} from={{ opacity: 0 }}>
+  {styles => ...}
+</MixingRef>
+```
+
+```jsx
+// This ...
+<Mixing opacity={1} color={'red'} />
+// is a shortcut for this ...
+<Mixing to={{ opacity: 1, color: 'red' }} />
+```
+
+```jsx
+handleAsyncTo = async (next, cancel) => {
+  await next({ opacity: 1, color: '#ffaaee' })
+  await next({ opacity: 0, color: 'rgb(14,26,19)' })
+}
+
+render (
+  <Mixing to={handleAsyncTo} from={{ opacity: 0, color: 'red' }}>
+    {styles => (
+      <animated.div style={styles}>I will fade in and out</animated.div>
+    )}
+  </Mixing>
+)
+```
+
+```jsx
+render (
+  <Mixing
+    loop
+    from={{ opacity: 0, color: 'red' }}
+    to={[
+      { opacity: 1, color: '#ffaaee' },
+      { opacity: 0, color: 'rgb(14,26,19)' },
+    ]}>
+    {styles => (
+      <animated.div style={styles}>I will fade in and out</animated.div>
+    )}
+  </Mixing>
+)
+```

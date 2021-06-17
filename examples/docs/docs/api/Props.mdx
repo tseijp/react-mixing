@@ -1,0 +1,213 @@
+---
+sidebar_position: 2
+sidebar_label: Props
+---
+
+# Props
+
+### Overview
+
+```js
+useMixing({ from: { ... }, to: { ... }, delay: 100, onRest: () => ... })
+```
+
+All primitives inherit the following properties
+(though some of them may bring their own additionally):
+
+Property | Type | Description
+:-|:-|:-
+from | obj | Base values, optional
+to | obj/fn/array(obj) | Animates to ...
+loop | obj/fn/bool
+delay | number/fn |
+immediate | bool/fn
+config| obj/fn | Mixing config
+events | fn |
+reset| bool |
+reverse | bool |
+cancel | bool/string/fn |
+pause | bool |
+
+
+# Advanced Props
+### Loop Prop
+
+```jsx
+const styles = useMixing({
+  loop: true,
+  from: { rotateZ: 0 },
+  to: { rotateZ: 180 },
+})
+
+render (
+  <animated.div
+    style={{
+      width: 80,
+      height: 80,
+      backgroundColor: '#46e891',
+      borderRadius: 16,
+      ...styles,
+    }}
+  />
+)
+```
+
+### The loop function
+
+```jsx
+const n = useRef(0)
+const styles = useMixing({
+  loop: () => 3 > n.current++,
+  from: { x: 0 },
+  to: { x: 100 },
+})
+
+render (
+  <animated.div
+    style={{
+      width: 80,
+      height: 80,
+      backgroundColor: '#46e891',
+      borderRadius: 16,
+      ...styles,
+    }}
+  />
+)
+```
+
+### The loop object
+
+```jsx
+const styles = useMixing({
+  loop: { reverse: true },
+  from: { x: 0 },
+  to: { x: 100 },
+})
+
+render (
+  <animated.div
+    style={{
+      width: 80,
+      height: 80,
+      backgroundColor: '#46e891',
+      borderRadius: 16,
+      ...styles,
+    }}
+  />
+)
+```
+
+### Inherited props
+
+```jsx
+const n = useRef(0)
+const styles = useMixing({
+  from: { x: 0 },
+  config: { duration: 1000 },
+  loop: {
+    x: 100,
+  },
+})
+
+render (
+  <animated.div
+    style={{
+      width: 80,
+      height: 80,
+      backgroundColor: '#46e891',
+      borderRadius: 16,
+      ...styles,
+    }}
+  />
+)
+```
+
+### Cancel Prop
+
+```jsx
+useMixing({
+  cancel: true,
+  from: { x: 0 },
+  to: { x: 100 },
+})
+```
+
+### Delayed updates
+
+```jsx
+const [style, animate] = useMixing(() => ({ x: 0 }))
+
+const onClick = () => {
+  animate({ x: 100, delay: 500 })
+  animate({ cancel: true })
+}
+```
+
+### Events
+
+Event name | Description
+:-|:-|:-
+onStart | Callback when a mixing or key is about to be animated
+onChange | Frame by frame callback
+onRest | Callback when a mixing or key comes to a stand-still
+onPause | Callback when a mixing or key is paused
+onResume | Callback when a mixing or key is resumed
+onDelayEnd | Callback when a mixing or key has finished being delayed
+onProps | Callback when a mixing or key's props have been updated
+
+```jsx
+useMixing({
+  from: { x: 0, y: 0 },
+  onRest: {
+    x: () => console.log('x.onRest'),
+    y: () => console.log('y.onRest'),
+  },
+})
+```
+
+### Declarative updates
+
+```jsx
+useMixing({
+  to: async animate => { ... },
+  onRest: () => { ... }
+})
+```
+
+### Imperative updates
+
+```jsx
+useMixing({
+  from: { x: 0 },
+  to: async animate => {
+    await animate({
+      to: [{ x: 100 }, { x: 0 }],
+      config: { tension: 100 },
+    })
+  },
+})
+```
+
+```jsx
+const ref = useMixingRef()
+const [{ x }, api] = useMixing(() => ({
+  x: 0,
+  onRest: () => { ... },
+  ref,
+}))
+
+useEffect(async () => {
+  await api.start({ x: 0 })
+  await ref.current.start({ x: 100 })
+}, [])
+```
+
+### Compatible props
+
+```jsx
+const { x } = useMixing({
+  x: 0,
+  default: { immediate: true },
+})
+useEffect(() => void x.start(100))
+```

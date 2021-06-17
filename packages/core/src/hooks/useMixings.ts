@@ -7,7 +7,7 @@ import {is, each, flush, usePrev, useOnce, useForceUpdate, useLayoutEffect} from
 import {
     ControllerUpdate,
     MixingValues,
-    PickAnimated,
+    PickSynthed,
     Lookup
 } from '../types'
 
@@ -19,14 +19,14 @@ export type UseMixingsProps<State extends Lookup = Lookup> = unknown &
 export function useMixings<Props extends UseMixingProps>(
     length: number,
     props: (i: number, ctrl: Controller) => Props,
-): PickAnimated<Props> extends infer State
+): PickSynthed<Props> extends infer State
     ? [MixingValues<State>[], MixingRef<State>]
     : never
 
 export function useMixings<Props extends UseMixingsProps>(
   length: number,
-  props: Props[] & UseMixingsProps<PickAnimated<Props>>[]
-): MixingValues<PickAnimated<Props>>[]
+  props: Props[] & UseMixingsProps<PickSynthed<Props>>[]
+): MixingValues<PickSynthed<Props>>[]
 
 export function useMixings(
   length: number,

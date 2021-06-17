@@ -1,4 +1,5 @@
-import { getSynthed } from './nodes'
+import {getSynthed} from './nodes'
+import {frameLoop, callFluidObservers} from './utils'
 
 export const isFrameValue = (value: any): value is FrameValue =>
   value instanceof FrameValue
@@ -20,7 +21,7 @@ export abstract class FrameValue<T = any> {
     set priority (priority: number) {
         if (this._priority != priority) {
             this._priority = priority
-            // this._onPriorityChange(priority)
+            this._onPriorityChange(priority)
         }
     }
 
@@ -45,7 +46,22 @@ export abstract class FrameValue<T = any> {
 
     protected _detach() {}
 
-    protected _onChange() {}
+    protected _onChange(value: T, idle = false) {
+        callFluidObservers(this, {
+            type: 'change',
+            parent: this,
+            value,
+            idle,
+        })
+    }
 
-    protected _onPriorityChange() {}
+    protected _onPriorityChange(priority: number) {
+        if (!this.idle)
+            frameLoop.sort(this)
+        callFluidObservers(this, {
+            type: 'priority',
+            parent: this,
+            priority,
+        })
+    }
 }

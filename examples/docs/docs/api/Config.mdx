@@ -1,0 +1,48 @@
+---
+sidebar_position: 3
+sidebar_label: Config
+---
+
+# Config
+
+Mixing are configurable and can be tuned.
+If you want to adjust these settings,
+you should provide a config property to useMixing:
+
+```js
+const { x } = useMixing({
+  from: { x: 0 },
+  config: { rate: 1 },
+})
+
+useEffect(() => {
+  x.start({ config: { volume: 0 } })
+  x.start({ config: { pitch: 20 } })
+}, [])
+```
+
+And we've added the following properties rate, pitch, volume, voice & lang.
+[more](https://developer.mozilla.org/en-US/docs/Web/API/MixingSynthesisUtterance)
+
+Property|Default|Description
+:-|:-|:-
+rate | 1 | the speed at which the utterance will be spoken at.
+pitch | 1 | the pitch at which the utterance will be spoken at.
+volume | 1 |  the volume that the utterance will be spoken at.
+voice | 1 | the voice that will be used to speak the utterance.
+lang | en | the language of the utterance.
+
+
+### Presets
+
+There are also a couple of generic presets that will cover some common ground.
+
+```js
+import { ..., config } from 'react-mixing'
+
+useMixing({ ..., config: config.default })
+```
+
+Property| Value
+:-|:-
+config.default | { start: 1, stop: 170, rate: 26 }

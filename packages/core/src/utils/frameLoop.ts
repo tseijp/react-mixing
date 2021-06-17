@@ -1,14 +1,14 @@
 import { raf } from 'rafz'
 
-export interface OpaqueSynth {
+export interface OpaqueSynthesis {
     idle: boolean
     priority: number
     advance(dt: number): void
 }
 
-const startQueue = new Set<OpaqueSynth>()
-let currentFrame: OpaqueSynth[] = []
-let prevFrame: OpaqueSynth[] = []
+const startQueue = new Set<OpaqueSynthesis>()
+let currentFrame: OpaqueSynthesis[] = []
+let prevFrame: OpaqueSynthesis[] = []
 let priority = 0
 
 export const frameLoop = {
@@ -16,30 +16,30 @@ export const frameLoop = {
         return !startQueue.size && !currentFrame.length
     },
 
-    start(audio: OpaqueSynth) {
-        if (priority > audio.priority) {
-            startQueue.add(audio)
+    start(synthesis: OpaqueSynthesis) {
+        if (priority > synthesis.priority) {
+            startQueue.add(synthesis)
             raf.onStart(() => {
                 startQueue.forEach(startSafely)
                 startQueue.clear()
                 raf(advance)
             })
         } else {
-            startSafely(audio)
+            startSafely(synthesis)
             raf(advance)
         }
     },
 
     advance,
 
-    sort(audio: OpaqueSynth) {
+    sort(synthesis: OpaqueSynthesis) {
         if (priority) {
-            raf.onFrame(() => frameLoop.sort(audio))
+            raf.onFrame(() => frameLoop.sort(synthesis))
         } else {
-            const prevIndex = currentFrame.indexOf(audio)
+            const prevIndex = currentFrame.indexOf(synthesis)
             if (~prevIndex) {
                 currentFrame.splice(prevIndex, 1)
-                startUnsafely(audio)
+                startUnsafely(synthesis)
             }
         }
     },
@@ -54,14 +54,14 @@ function advance(dt: number) {
     const nextFrame = prevFrame
 
     for (let i = 0; i < currentFrame.length; i++) {
-        const audio = currentFrame[i]
-        priority = audio.priority
+        const synthesis = currentFrame[i]
+        priority = synthesis.priority
 
-        if (!audio.idle) {
-            // G.willAdvance(audio)
-            audio.advance(dt)
-            if (!audio.idle) {
-                nextFrame.push(audio)
+        if (!synthesis.idle) {
+            // G.willAdvance(synthesis)
+            synthesis.advance(dt)
+            if (!synthesis.idle) {
+                nextFrame.push(synthesis)
             }
         }
     }
@@ -73,15 +73,13 @@ function advance(dt: number) {
     return currentFrame.length > 0
 }
 
-// util
-
-function startSafely(audio: OpaqueSynth) {
-    if (!currentFrame.includes(audio)) startUnsafely(audio)
+function startSafely(synthesis: OpaqueSynthesis) {
+    if (!currentFrame.includes(synthesis)) startUnsafely(synthesis)
 }
 
-function startUnsafely(audio: OpaqueSynth) {
-    const id = findIndex(currentFrame, other => other.priority > audio.priority)
-    currentFrame.splice(id, 0, audio)
+function startUnsafely(synthesis: OpaqueSynthesis) {
+    const id = findIndex(currentFrame, other => other.priority > synthesis.priority)
+    currentFrame.splice(id, 0, synthesis)
 }
 
 function findIndex<T>(arr: T[], test: (value: T) => boolean) {

@@ -1,5 +1,6 @@
 import {MixingRef} from '../MixingRef'
 import {Controller} from '../Controller'
+import {FluidValue, FluidProps} from '../utils'
 import {
     Any,
     Falsy,
@@ -9,7 +10,7 @@ import {
     IsPlainObject,
 } from './utils'
 
-type FluidValue<T = any> = any | T
+type MixingToFn<T=any> = T
 
 export type MixingUpdate<T = any> = ToProps<T> & MixingProps<T>
 
@@ -124,7 +125,7 @@ export interface ReservedEventProps {
     onDestroyed?: any
 }
 
-export type PickAnimated<Props extends object, Fwd = true> = unknown &
+export type PickSynthed<Props extends object, Fwd = true> = unknown &
   ([Props] extends [Any]
     ? Lookup
     : [object] extends [Props]

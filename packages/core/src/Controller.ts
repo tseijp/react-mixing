@@ -62,16 +62,15 @@ export class Controller<T extends Lookup = Lookup> {
 
     get (): T & UnknownProps {
         const values: any = {}
-        eachProp(this.mixings, (mixing, key) => (values[key] = mixing.get()))
+        eachProp(this.mixings, (mixing, key) => (values[key] = mixing?.get()))
         return values
     }
 
-    set (values?: Partial<T>) {
-        for (const key in values) {
-            const value = values[key]
+    set (values: Partial<T>) {
+        eachProp(values, (value, key) => {
             if (!is.und(value))
-                this.mixings[key].set(value)
-        }
+                this.mixings[key]?.set() // (value)
+        })
     }
 
     // each (eachFn) {
@@ -211,4 +210,4 @@ function prepareMixings(
     }
 }
 
-function createUpdate () {}
+function createUpdate (...args: any) {}

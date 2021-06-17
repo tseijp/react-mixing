@@ -1,0 +1,73 @@
+---
+sidebar_position: 0
+sidebar_label: useMixing
+---
+
+# useMixing
+
+### Overview
+
+```jsx
+import { useMixing, animated } from 'react-mixing'
+
+const [synth, api] = useMixing(() => ({ value: 1 }))
+
+api.start({ opacity: toggle ? 1 : 0 })
+api.stop()
+
+render (
+  <animated.div style={synth}>
+    i will fade
+  </animated.div>
+)
+```
+
+### Async chains/scripts
+
+```jsx
+const styles = useMixing({
+  to: async (next, cancel) => {
+    await next({ opacity: 1, color: '#ffaaee' })
+    await next({ opacity: 0, color: 'rgb(14,26,19)' })
+  },
+  from: { opacity: 0, color: 'red' },
+})
+render (
+  <animated.div style={styles}>
+    I will fade in and out
+  </animated.div>
+)
+```
+
+And this is how you create a chain
+
+```jsx
+const styles = useMixing({
+  loop: true,
+  to: [
+    { opacity: 1, color: '#ffaaee' },
+    { opacity: 0, color: 'rgb(14,26,19)' },
+  ],
+  from: { opacity: 0, color: 'red' },
+})
+
+render (
+  <animated.div style={styles}>
+    I will fade in and out
+  </animated.div>
+)
+```
+
+```jsx
+useMixing({
+  to: useCallback(async next => { ... }, []),
+})
+```
+
+Another solution is to pass a props function.
+
+```jsx
+useMixing(() => ({
+  to: async next => { ... },
+}))
+```

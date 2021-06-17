@@ -14,21 +14,20 @@
         "index.d.ts",
         "index.cjs.js"
     ],
+    "publishConfig": {"access": "public"},
     "description": "Cross-platform mixing engine for React",
     "homepage": "https://github.com/tseijp/react-mixing#readme",
+    "bugs": {"url": "https://github.com/tseijp/react-mixing/issues"},
     "repository": {
         "type": "git",
         "url": "git+https://github.com/tseijp/react-mixing.git"
     },
-    "bugs": {
-        "url": "https://github.com/tseijp/react-mixing/issues"
-    },
-    "publishConfig": {
-        "access": "public"
-    },
-    "scripts": {
-        "test": "echo \"Error: run tests from root\" && exit 1"
-    },
+    "keywords": [
+        "hooks",
+        "react",
+        "audio",
+        "typescript"
+    ],
     "dependencies": {
         "rafz": "^0.1.14"
     },
