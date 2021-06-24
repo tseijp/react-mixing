@@ -1,14 +1,14 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  title: 'react-mixing',
+  title: 'react mixing 🤞',
   tagline: 'react-mixing are cool',
-  url: 'https://rmix.tsei.jp',
-  baseUrl: '/',
+  url: 'https://tseijp.github.io',
+  baseUrl: '/react-mixing/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.png',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'tseijp',
+  projectName: 'react-mixing',
   themeConfig: {
     prism: {
       theme: require('prism-react-renderer/themes/vsDark'),
@@ -17,7 +17,6 @@ module.exports = {
       title: 'react mixing 🤞',
       items: [
         {type: 'doc', docId: 'intro', position: 'left', label: 'Docs'},
-        {to: '/examples/intro', label: 'Examples', position: 'left'},
         {
           href: 'https://github.com/tseijp/react-mixing',
           label: 'GitHub',
@@ -32,7 +31,6 @@ module.exports = {
           title: 'Pages',
           items: [
             {label: 'Docs', to: '/docs/intro'},
-            {label: 'Examples', to: '/examples/intro'},
           ],
         },
         {
@@ -59,7 +57,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/tseijp/react-mixing/edit/master/examples/',
-        }
+        },
       },
     ],
   ],

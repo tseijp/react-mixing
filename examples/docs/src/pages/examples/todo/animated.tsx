@@ -1,9 +1,11 @@
 import React from 'react'
 import Layout from '@theme/Layout'
-import s from 'react-mixing'
 import {animated as a} from 'react-spring'
+// import s from 'react-mixing/src'
 
 export default function App () {
+    if (typeof window === 'undefined')
+        return null
     const ctx = React.useMemo(() => new AudioContext(), [])
     const [toggle, set] = React.useState(false)
     return (
@@ -11,11 +13,13 @@ export default function App () {
           <h1>Gain</h1>
           <button onClick={() => set((p=true) => !p)}>
             {toggle? 'Stop': 'Start'}
+            {/*
             <s.Oscillator immediate context={ctx}>
               {(from: any) =>
                 <a.div>{from}</a.div>
               }
             </s.Oscillator>
+            */}
           </button>
         </Layout>
     )//setValueAtTime={[.2, ctx.currentTime]}

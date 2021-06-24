@@ -1,6 +1,6 @@
 import React from 'react'
 import Layout from '@theme/Layout'
-import {MixingRef} from 'react-mixing/src'
+// import {MixingRef} from 'react-mixing/src'
 
 export default function App () {
     return (

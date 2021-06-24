@@ -1,109 +1,152 @@
 // ref
 // https://developer.mozilla.org/ja/docs/Web/API/MixingSynthesis
-import {is} from './utils'
-import {raf} from 'rafz'
 import {
-    Lookup,
     MixingProps,
     MixingUpdate,
 } from './types'
+import {
+    is,
+    each,
+    getFluidValue,
+    FluidValue
+} from './utils'
+import {
+    getSynthedType,
+    getSynthed,
+    setSynthed,
+    Synthed
+} from './nodes'
 import {FrameValue} from './FrameValue'
 import {Synthesis} from './Synthesis'
 
-export class MixingValue <T extends Lookup = Lookup> extends FrameValue<T> {
+const initState = {
+}
+
+export class MixingValue <T extends any = any> extends FrameValue<T> {
     key?: string
-    idle = false
     synthesis = new Synthesis()
     queue: MixingUpdate<T>[] = []
     defaultProps = {}
 
-    readonly _state = {
-        paused: false,
-        pausedQueue: new Set(),
-        resumeQueue: new Set(),
-        timeouts: new Set()
-    }
+    readonly _state = initState
 
-    protected _priority = 0
-    protected _pendingCalls = new Set<any>()
-    protected _lastToId = 0
-    protected _lastCallId = 0
-    protected _memoizedDuration = 0
-
-    constructor (arg1: any, arg2: any) {
+    constructor (arg1: any, arg2?: any) {
         super()
         if (!is.und(arg1) || !is.und(arg2)) {
-            const props = is.obj(arg1)? {...arg1}: {...arg2, from: arg1}
-            if (is.und(props.default))
-                props.default = true
-            this.start(props)
+            const to = is.obj(arg1)
+                ? {...arg1}
+                : {...arg2, from: arg1}
+            this.start(to)
         }
     }
 
-    advance () {}
+    set (value: T | FluidValue<T>) {
+        this._stop()
+        this._set(value)
+    }
 
-    set () {
-        raf.batchedUpdates(() => {
-            this._stop()
-            this._focus()
-            this._set()
+    advance () {
+        const synth = this.synthesis
+        each(synth.values, (node, i) => {
+            // if (node.done) return
         })
-        return this
     }
 
     pause () {
-        return this
+        return this._update({pause: true})
     }
 
     resume () {
-        return this
+        return this._update({pause: true})
     }
 
-    //!
-    finish () {
-        const { to, config } = this.synthesis
-        raf.batchedUpdates(() => {
-            this._onStart()
-            // if (!config.decay)
-            //     this._set(to, false)
-            this._stop()
-        })
-        return this
+    reset () {
+        return this._update({reset: true})
     }
 
     update (props: MixingUpdate<T>) {
         (this.queue || (this.queue = [])).push(props)
-        return this
     }
 
-    start (to?: T | MixingUpdate<T>, arg2?: MixingProps<T>) {
-        let queue: MixingUpdate<T>[]
-        if (!is.und(to))
-            queue = [is.obj(to)? to: {...arg2, to}]
-        else
-            queue = (this.queue || (this.queue = []))
+    start (to?: MixingUpdate<T>, arg2?: MixingProps<T>) {
+        const queue = is.und(to)
+            ? (this.queue || (this.queue = []))
+            : [is.obj(to)? to: {...arg2, to}]
         return Promise.all(queue.map(props => this._update(props)))
     }
 
     stop (cancel=false) {
-        return this
+        const synth = this.synthesis
+        synth.pauseQueue.clear()
+        synth.resumeQueue.clear()
+        this._stop(synth.to, cancel)
     }
 
-    reset (reset=true) {
-        return this
+
+    protected _set (arg: T | FluidValue<T>): Synthed | undefined  {
+        const value = getFluidValue(arg)
+        if (is.und(value))
+            return getSynthed(this)
+
+        const oldNode = getSynthed(this)
+        if (oldNode && is(value, oldNode.get())) return
+        const nodeType = getSynthedType(value)
+        if (!oldNode || oldNode.constructor != nodeType)
+            setSynthed(this, nodeType.create(value))
+        else
+            oldNode?.set(value)
     }
 
-    eventObserved(event: any) {
-        if (event.type == 'change')
-            this.start()
-        else if (event.type == 'priority')
-            this._priority = event.priority + 1
+    protected _start (...args: any) {
+        const synth = this.synthesis
+        getSynthed(this)!.reset(getFluidValue(synth.to))
+
     }
 
-    _set (...args: any) {}
-    _stop (...args: any) {}
-    _update (...args: any) {}
-    _focus (...args: any) {}
-    _onStart(...args: any) {}
-    _onChange (...args: any) {}
+    protected _stop (...args: any) {
+    }
+
+    protected _focus (value: any) {
+    }
+
+    protected _update (props: MixingProps<T>) {
+        const range = this._prepareNode(props)
+        return new Promise(resolve => this._merge(range, props, resolve))
+    }
+
+    protected _merge (range: any, props: any, resolve: any) {
+        if (props.cancel) {
+            this.stop(true)
+            return resolve(getCancelledResult(this))
+        }
+        const { key, defaultProps, synthesis: synth } = this
+        const { to: prevTo, from: prevFrom } = synth
+        let { to = prevTo, from = prevFrom } = range
+        if (props.reverse) [to, from] = [from, to]
+        from = getFluidValue(from)
+        const isFromUndefined = !is.und(prevFrom),
+                isToUndefined = !is.und(prevTo),
+               hasFromChanged = !is(from, prevFrom),
+                 hasToChanged = !is(to, prevTo)
+        if (hasToChanged)
+            this._focus(to)
+        if (hasFromChanged)
+            synth.from = from
+    }
+
+    protected _prepareNode(props: any) {
+        const key = this.key || ''
+        let { to, from } = props
+
+        from = is.obj(from)? from[key] : from
+        to = is.obj(to)? to[key] : to
+        if (from == null)
+            from = undefined
+        if (to == null || is.fun(to))
+            to = undefined
+
+        const range = { to, from }
+        this._set(getSynthed(this)? to: from)
+        return range
+    }
 }

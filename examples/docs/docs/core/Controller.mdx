@@ -1,0 +1,77 @@
+---
+sidebar_position: 0
+sidebar_label: Controller
+---
+
+# Controller
+
+import {Live} from '../../components/Live'
+
+<Live.Card scope={{React}} code={`
+render (
+  <button>
+    start
+  </button>
+)
+`.trim()}/>
+
+## Methods
+
+*`each((mixing, key) => void): this`*
+
+```js
+Controller.each((mixing, key) =>
+  key === 'opacity' && mixing.set(1)
+)
+```
+
+*`get(): T`*
+
+```js
+const mixingValues controller.get()
+```
+
+*`pause (key?): this`*
+
+```js
+controller.pause()
+```
+
+*`resume(keys?): this`*
+
+```js
+controller.resume()
+```
+
+*`set(values): void`*
+
+```js
+controller.ests(et{opacity: 1})
+```
+
+
+*`start(props?): Promise`*
+
+```js
+controller.start({opacity: 1})
+```
+
+*`sop(keys?): this`*
+
+```js
+controller.stop(['opacity'])
+```
+
+*`update(props?): this`*`
+
+```js
+controller.update({opacity: 1})
+```
+
+## Properties
+
+*`queue: SpringUpdate<T>[]`*
+
+*`refs: MixingRef<T>[]`*
+
+*`mixings: MixingValuees<T>`*

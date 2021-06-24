@@ -4,6 +4,7 @@ import {Synthed, setSynthed} from './Synthed'
 export class SynthedNode<T = any> extends Synthed<AudioNode> {
     _ctx?: AudioContext
     _node?: AudioNode
+    done = false
     parents = new Set<SynthedNode<T>>()
 
     constructor () {

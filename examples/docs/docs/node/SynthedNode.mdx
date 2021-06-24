@@ -1,0 +1,51 @@
+---
+sidebar_position: 0
+sidebar_label: Synthed Node
+---
+
+# Synthed Node
+
+import {Live} from '../../components/Live'
+import {animated} from 'react-spring'
+
+<Live.Card scope={{React, animated}} code={`
+render (
+    <button>start</button>
+)
+`.trim()}/>
+
+- `number`
+
+```js
+new SynthedNode(0)
+```
+
+- `string`
+
+```js
+new SynthedNode(`0px 10px`)
+```
+
+- named nodes
+
+```js
+new SynthedNode('noise')
+```
+
+## Methods
+
+*`get(): T`*
+
+*`set (value): this`*
+
+*`start(props?): Promise`*
+
+*`stop(): this`*
+
+*`reset(): this`*
+
+## Properties
+
+*`synthesis`*
+
+*`queue`*

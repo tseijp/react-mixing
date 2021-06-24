@@ -1,7 +1,7 @@
 // ref: https://codesandbox.io/s/github/uidotdev/post-web-audio-api/tree/b2a68eb117474cdb0ff66d4e0dc2b072ddc3c528
 import React from 'react'
 import Layout from '@theme/Layout'
-import s from 'react-mixing/src'
+// import s from 'react-mixing/src'
 
 // const whiteNoise = useAudioContext(ctx = {
 //     const buffer = ctx.createBuffer(1, SAMPLE_RATE, SAMPLE_RATE)
@@ -10,6 +10,8 @@ import s from 'react-mixing/src'
 //         channelData[i] = Math.random() * 2 - 1;
 // })
 export default function App () {
+    if (typeof window === 'undefined')
+        return null
     const [toggle, set] = React.useState(false)
     const [buffer, ctx] = React.useMemo(() => {
         const ctx = new AudioContext()
@@ -25,10 +27,11 @@ export default function App () {
       <Layout title="Noise">
         <button onClick={() => set((p=true) => !p)}>
           {toggle? 'Stop': 'Start'}
-
+          {/*
           <s.BufferSource context={ctx} immediate={toggle} buffer={buffer}>
             <s.Gain context={ctx} setValueAtTime={[.05, 0]} destinate/>
           </s.BufferSource>
+          */}
         </button>
       </Layout>
     )

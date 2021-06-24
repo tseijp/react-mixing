@@ -33,6 +33,8 @@ export function flush(queue: any, iterator: any) {
     }
 }
 
+type PlainObject<T = any> = Exclude<T & {[key: string]: any}, Function | readonly any[]>
+
 const is = (a: any, b?: any, ...other: any): boolean => {
     if (other.length > 0) return is(a, b) && is(b, ...other)
     if (typeof a !== typeof b) return false
@@ -49,7 +51,7 @@ is.und = (a: unknown): a is undefined => a === void 0
 is.num = (a: unknown): a is number => typeof a === 'number'
 is.str = (a: unknown): a is string => typeof a === 'string'
 is.fun = (a: unknown): a is Function => typeof a === 'function'
-is.obj = (a: unknown): a is object => Object.prototype.toString.call(a) === '[object Object]'
+is.obj = <T = any>(a: T & any): a is PlainObject<T> => !!a && a.constructor.name === 'Object',
 is.url = (a: unknown): a is URL => a instanceof URL
 is.set = (a: unknown): a is Set<any> => a instanceof Set
 is.map = (a: unknown): a is Map<any, any> => a instanceof Map

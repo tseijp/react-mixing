@@ -1,6 +1,6 @@
 import React from 'react'
 import Layout from '@theme/Layout'
-import s from 'react-mixing'
+// import s from 'react-mixing/src'
 
 // const [resume, suspend] = useAudioContext(ctx => [ctx.resume, ctx.suspend])
 // const [mixing, set] = useMixing({frequency: 1, detune: 1, type: 1})
@@ -13,6 +13,8 @@ import s from 'react-mixing'
 // )
 
 export default function App () {
+    if (typeof window === 'undefined')
+        return null
     const ctx = React.useMemo(() => new AudioContext(), [])
     const [toggle, set] = React.useState(false)
     return (
@@ -20,11 +22,13 @@ export default function App () {
           <h1>Gain</h1>
           <button onClick={() => set((p=true) => !p)}>
             {toggle? 'Stop': 'Start'}
+            {/*
             <s.Oscillator immediate context={ctx}>
               {(from: any) =>
                 <s.Gain from={from} value={Number(toggle)} destinate/>
               }
             </s.Oscillator>
+            */}
           </button>
         </Layout>
     )//setValueAtTime={[.2, ctx.currentTime]}

@@ -33,7 +33,6 @@ export default function App () {
               <Live.Error style={{maxHeight: "20rem"}}/>
             </Live.Container>
           </Live>
-          <Home.Features/>
         </Home>
       </Layout>
     );

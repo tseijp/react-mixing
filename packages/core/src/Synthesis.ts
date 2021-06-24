@@ -4,6 +4,12 @@ import { Config } from './Config'
 const emptyArray: readonly any[] = []
 
 export class Synthesis<T = any> {
+    idle = false
+    paused = false
+    timeouts = new Set()
+    pauseQueue = new Set()
+    resumeQueue = new Set()
+
     changed = false
     values: readonly SynthedNode[] = emptyArray
     toValues: readonly number[] | null = null

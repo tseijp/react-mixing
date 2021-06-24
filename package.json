@@ -1,0 +1,25 @@
+{
+    "name": "@react-mixing/root",
+    "author": "tsei",
+    "license": "MIT",
+    "private": true,
+    "description": "Cross-platform mixing engine for React",
+    "repository": "tseijp/react-mixing",
+    "homepage": "https://github.com/tseijp/react-mixing#readme",
+    "maintainers": ["tseijp (https://github.com/tseijp)"],
+    "workspaces": ["packages/*", "examples/*"],
+    "scripts": {
+        "init": "npm i -g yarn lerna && npx lerna bootstrap",
+        "start": "lerna exec --scope @react-mixing/docs -- yarn start",
+        "build": "lerna exec --scope @react-mixing/docs -- yarn build",
+        "deploy": "lerna exec --scope @react-mixing/docs -- yarn deploy",
+        "update": "lerna exec --scope react-mixing -- yarn publish",
+        "rollup": "lerna exec --scope react-mixing -- rollup -c",
+        "watch": "lerna exec --scope react-mixing -- jest --watch --runInBand",
+        "cov": "lerna exec --scope react-mixing -- jest --coverage",
+        "ls": "lerna exec --scope react-mixing -- npm pack --dry-run"
+    },
+    "devDependencies": {
+        "lerna": "^4.0.0"
+    }
+}

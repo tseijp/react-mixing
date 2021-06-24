@@ -1,4 +1,5 @@
 import {MixingRef} from '../MixingRef'
+import {Config} from '../Config'
 import {Controller} from '../Controller'
 import {FluidValue, FluidProps} from '../utils'
 import {
@@ -6,6 +7,7 @@ import {
     Falsy,
     Lookup,
     OneOrMore,
+    StringKeys,
     UnknownProps,
     IsPlainObject,
 } from './utils'
@@ -18,7 +20,7 @@ export type MixingsUpdate<State extends Lookup = UnknownProps> =
   | OneOrMore<ControllerUpdate<State>>
   | ((index: number, ctrl: Controller<State>) => ControllerUpdate<State> | null)
 
-export interface MixingProps<T = any> {//extends MixingProps<T> {
+export interface MixingProps<T = any> extends SynthesisProps<T> {
     from?: GoalValue<T>
     loop?: LoopProp<MixingUpdate>
     onProps?: (...args: any[]) => any
@@ -84,6 +86,16 @@ export type LoopProp<T extends object> = boolean | T | (() => boolean | T)
 export type VelocityProp<T = any> = T extends ReadonlyArray<number | string>
   ? number[]
   : number
+
+export interface SynthesisProps<T = any> {
+    config?: Config | ((key: StringKeys<T>) => Config)
+    delay?: number | ((key: StringKeys<T>) => Config)
+    immeduate?: boolean
+    cancel?: boolean
+    pause?: boolean
+    reset?: boolean
+    reverse?: boolean
+}
 
 export interface ReservedProps extends ReservedEventProps {
     config?: any

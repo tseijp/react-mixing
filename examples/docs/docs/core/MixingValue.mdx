@@ -1,0 +1,57 @@
+---
+sidebar_position: 0
+sidebar_label: Mixing Value
+---
+
+# Mixing Value
+
+import {Live} from '../../components/Live'
+import {animated} from 'react-spring'
+
+<Live.Card scope={{React, animated}} code={`
+render (
+  <animated.div></animated.div>
+)
+`.trim()}/>
+
+- `number`
+
+```js
+new MixingValue(0)
+```
+
+- `string`
+
+```js
+new MmixingValue(`0px 10px`)
+```
+
+- named nodes
+
+```js
+new MixingValue('noise')
+```
+
+- add arrays of the preceding types
+
+```js
+new MixingValue([0, '1rem'])
+```
+
+## Methods
+
+*`get(): T`*
+
+*`set (value): this`*
+
+*`start(props?): Promise`*
+
+*`stop(): this`*
+
+*`reset(): this`*
+
+## Properties
+
+*`synthesis`*
+
+*`queue`*

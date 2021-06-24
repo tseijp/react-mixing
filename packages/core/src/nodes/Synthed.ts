@@ -1,4 +1,6 @@
-import {defineHidden} from '../utils'
+import {is, setHidden} from '../utils'
+import {SynthedNode} from './SynthedNode'
+import {SynthedNodes} from './SynthedNodes'
 
 const $node: any = Symbol.for('Synthed:node')
 
@@ -9,7 +11,16 @@ export const getSynthed = <T = any>(owner: any): Synthed<T> | undefined =>
     owner && owner[$node]
 
 export const setSynthed = <T = any>(owner: any, node: Synthed<T>) =>
-    defineHidden(owner, $node, node)
+    setHidden(owner, $node, node)
+
+export const getSynthedType = (value: any) => {
+    const parentNode = getSynthed(value)
+    return parentNode
+        ? (parentNode.constructor as any)
+        : is.arr(value) || is.obj(value)
+        ? SynthedNodes
+        : SynthedNode
+}
 
 export abstract class Synthed <T = any>{
     abstract get (synthed?: boolean): T | undefined

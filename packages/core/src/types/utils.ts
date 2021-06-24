@@ -36,3 +36,7 @@ export type InferTarget<T> = T extends object
         ? MixingValue<T>
         : Controller<T>
     : MixingValue<T>
+
+export type StringKeys<T> = T extends IsPlainObject<T>
+  ? string & keyof T
+  : string

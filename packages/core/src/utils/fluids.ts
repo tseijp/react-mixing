@@ -30,10 +30,10 @@ export {
   getFluidObservers,
   callFluidObserver,
   callFluidObservers,
-  // Mutations
   setFluidGetter,
   addFluidObserver,
   removeFluidObserver,
+  setHidden,
 }
 
 /** Returns true if `arg` can be observed. */
