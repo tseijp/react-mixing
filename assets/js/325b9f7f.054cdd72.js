@@ -1,0 +1,1 @@
+(self.webpackChunk_react_mixing_docs=self.webpackChunk_react_mixing_docs||[]).push([[82],{11722:function(e,n,t){"use strict";t.r(n),t.d(n,{default:function(){return c}});var i=t(2784),u=t(27902);function c(){return"undefined"==typeof window?null:i.createElement(u.Z,{title:"useMixing"},i.createElement("h1",null,"useMixing"))}}}]);
