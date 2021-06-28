@@ -17,6 +17,7 @@ module.exports = {
       title: 'react mixing 🤞',
       items: [
         {type: 'doc', docId: 'intro', position: 'left', label: 'Docs'},
+        {to: '/examples/intro', label: 'Examples', position: 'left'},
         {
           href: 'https://github.com/tseijp/react-mixing',
           label: 'GitHub',
