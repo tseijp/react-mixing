@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef, useCallback as call} from 'react'
-import Sequencer from '../../../components/Sequencer'
+import {Sequencer} from '../../../components/Sequencer'
+import styled from 'styled-components'
 
 const getNotesForOctave = (octave: any) =>
     Object.keys(Sequencer.Notes).reduce((state, note) => {
@@ -80,117 +81,113 @@ export default function () {
 
     return (
       <Sequencer>
-        <Sequencer.Provider>
-          <Sequencer.Sequencer>
-            <Sequencer.Buttons>
-              <button
-                type="button"
-                className={playing ? 'active' : ''}
-                onClick={() => {
-                  if (playing) pause()
-                  else play()
-                }}
-              >
-                {playing? 'Pause': 'Play'}
-              </button>
+        <Sequencer.Buttons>
+          <button
+            type="button"
+            className={playing ? 'active' : ''}
+            onClick={() => {
+              if (playing) pause()
+              else play()
+            }}
+          >
+            {playing? 'Pause': 'Play'}
+          </button>
 
-              <Sequencer.SelectWrapper>
-                <span>BPM</span>
-                <input
-                  type="number"
-                  min="80"
-                  max="300"
-                  step="1"
-                  defaultValue={bpm}
-                  onChange={e => changeBPM(e.target.value)}
-                />
-              </Sequencer.SelectWrapper>
+          <Sequencer.SelectWrapper>
+            <span>BPM</span>
+            <input
+              type="number"
+              min="80"
+              max="300"
+              step="1"
+              defaultValue={bpm}
+              onChange={e => changeBPM(e.target.value)}
+            />
+          </Sequencer.SelectWrapper>
 
-              <Sequencer.SelectWrapper>
-                <span>Wave</span>
-                <select
-                  value={type}
-                  data-label="wave"
-                  className="wave"
-                  onChange={e => setTypes(e.target.value)}
+          <Sequencer.SelectWrapper>
+            <span>Wave</span>
+            <select
+              value={type}
+              data-label="wave"
+              className="wave"
+              onChange={e => setTypes(e.target.value)}
+            >
+              <option>Sine</option>
+              <option>Square</option>
+              <option>Sawtooth</option>
+              <option>Triangle</option>
+            </select>
+          </Sequencer.SelectWrapper>
+
+          <Sequencer.SelectWrapper>
+            <span>Octave</span>
+            <select
+              value={octave}
+              data-label="octave"
+              className="octave"
+              onChange={e => changeOctave(e.target.value)}
+            >
+
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+            </select>
+          </Sequencer.SelectWrapper>
+
+          <Sequencer.SelectWrapper>
+            <span>Release</span>
+            <input
+              type="number"
+              min="0"
+              max="400"
+              step="1"
+              defaultValue={release}
+              onChange={e => setRelease(Number(e.target.value))}
+            />
+          </Sequencer.SelectWrapper>
+
+          <button
+            type="button"
+            className={delay? 'active': ''}
+            onClick={() => setDelay(delay => !delay)}
+          >
+            Delay
+          </button>
+        </Sequencer.Buttons>
+
+        <Sequencer.NoteSet>
+          {Object.keys(notes)
+            .slice(0, 8)
+            .reverse()
+            .map(note => (
+              <li key={`note-${note}`}>
+                {note.slice(0, note.length - 1)}
+              </li>
+            ))}
+        </Sequencer.NoteSet>
+
+        <Sequencer.Flex>
+          {pads.map((group, j) => (
+            <Sequencer.Pads key={`pad-${j}`}>
+              {group.map((pad, i) => (
+                <Sequencer.Pad
+                  key={`pad-group-${i}`}
+                  light={pad === 1}
+                  active={j === step}
+                  onClick={() => {
+                    togglePad(j, i)
+                  }}
                 >
-                  <option>Sine</option>
-                  <option>Square</option>
-                  <option>Sawtooth</option>
-                  <option>Triangle</option>
-                </select>
-              </Sequencer.SelectWrapper>
-
-              <Sequencer.SelectWrapper>
-                <span>Octave</span>
-                <select
-                  value={octave}
-                  data-label="octave"
-                  className="octave"
-                  onChange={e => changeOctave(e.target.value)}
-                >
-
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                </select>
-              </Sequencer.SelectWrapper>
-
-              <Sequencer.SelectWrapper>
-                <span>Release</span>
-                <input
-                  type="number"
-                  min="0"
-                  max="400"
-                  step="1"
-                  defaultValue={release}
-                  onChange={e => setRelease(Number(e.target.value))}
-                />
-              </Sequencer.SelectWrapper>
-
-              <button
-                type="button"
-                className={delay? 'active': ''}
-                onClick={() => setDelay(delay => !delay)}
-              >
-                Delay
-              </button>
-            </Sequencer.Buttons>
-
-            <Sequencer.NoteSet>
-              {Object.keys(notes)
-                .slice(0, 8)
-                .reverse()
-                .map(note => (
-                  <li key={`note-${note}`}>
-                    {note.slice(0, note.length - 1)}
-                  </li>
-                ))}
-            </Sequencer.NoteSet>
-
-            <Sequencer.Flex>
-              {pads.map((group, j) => (
-                <Sequencer.Pads key={`pad-${j}`}>
-                  {group.map((pad, i) => (
-                    <Sequencer.Pad
-                      key={`pad-group-${i}`}
-                      light={pad === 1}
-                      active={j === step}
-                      onClick={() => {
-                        togglePad(j, i)
-                      }}
-                    >
-                    </Sequencer.Pad>
-                  ))}
-                </Sequencer.Pads>
+                </Sequencer.Pad>
               ))}
-            </Sequencer.Flex>
-          </Sequencer.Sequencer>
-        </Sequencer.Provider>
+            </Sequencer.Pads>
+          ))}
+        </Sequencer.Flex>
       </Sequencer>
     )
 }

@@ -14,7 +14,20 @@ const $primary = '#0087ff'
 const $controller_size = '600px'
 const $radius = '4px'
 
-const Sequencer: any = styled(Layout)`
+export function Sequencer (props: any) {
+    const {children, ...other} = props
+    return (
+      <Sequencer.Layout {...other}>
+        <Sequencer.Provider>
+          <Sequencer.Container>
+            {children}
+          </Sequencer.Container>
+        </Sequencer.Provider>
+      </Sequencer.Layout>
+    )
+}
+
+Sequencer.Layout = styled(Layout)`
     background: ${$dark};
     font-family: 'Helvetica Neue';
     display: flex;
@@ -22,10 +35,10 @@ const Sequencer: any = styled(Layout)`
     padding-top: 1em;
     text-align: center;
 `
+Sequencer.Provider = (props: any) =>
+    <ThemeProvider {...props} theme={useThemeContext()}/>
 
-Sequencer.Provider = props => el(ThemeProvider, {...props, theme: useThemeContext()})
-
-Sequencer.Sequencer = styled.div`
+Sequencer.Container = styled.div`
     position: relative;
     left: 50%;
     transform: translateX(-50%);
@@ -145,5 +158,3 @@ Sequencer.Pad = styled.div`
 Sequencer.Notes = Notes
 
 Sequencer.Synth = Synth
-
-export default Sequencer
