@@ -58,7 +58,8 @@ export default function () {
     )
 
     return (
-        <SequencerView.Root>
+        <SequencerView>
+          <h1>Sequencer View</h1>
           <SequencerView.Controls>
             <SequencerView.TimeSignature>
               <h4>Time signature</h4>
@@ -107,7 +108,7 @@ export default function () {
                         onClick={() => {
                             setNotes(notes => {
                                 notes[sampleIdx][noteIdx] ^= 1
-                                return notes
+                                return [...notes]
                             });
                         }}
                     />
@@ -177,6 +178,6 @@ export default function () {
               Reggaeton
             </button>
           </div>
-        </SequencerView.Root>
+        </SequencerView>
     );
 }

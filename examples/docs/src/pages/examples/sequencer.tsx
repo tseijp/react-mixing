@@ -1,3 +1,5 @@
+// ref
+// https://codesandbox.io/s/github/webmaeistro/react-sequenc-drummachine
 import React, {useEffect, useState, useRef, useCallback as call} from 'react'
 import {Sequencer} from '../../../components/Sequencer'
 import styled from 'styled-components'
@@ -34,50 +36,32 @@ export default function () {
       [notes, setNotes] = useState(getNotesForOctave(4)),
        [pads, setPads] = useState(defaultPads)
 
-
-    const changeBPM = call((bpm) => {
-        if (60 < bpm && bpm < 300) return
-        setBpm(() => bpm)
-    }, [])
-
-   const changeOctave = call((octave) => {
-        setOctave(Number(octave))
-        setNotes(getNotesForOctave(Number(octave)))
-    }, [])
-
     const play = call(() => {
         synth.current = new Sequencer.Synth()
         const notesArray = Object.keys(notes).map(key => notes[key])
         setPlaying(true)
         interval.current = setInterval(() => {
-            setStep(step => step < steps - 1? step + 1 : 0)
-            const next = pads[step]
-                .map((pad, i) => (pad === 1 ? notesArray[i] : null))
-                .filter(x => x)
-              synth.current?.playNotes(next, {release, bpm, type, delay})
+            setStep(step => {
+                const nextStep = step < steps - 1? step + 1 : 0
+                const nextPads = pads[nextStep]
+                    .map((pad, i) => (pad === 1 ? notesArray[i] : null))
+                    .filter(x => x)
+                synth.current?.playNotes(nextPads, {release, bpm, type, delay})
+                return nextStep
+            })
         }, (60 * 1000) / bpm / 2)
-    }, [bpm, notes, type, release, delay])
+    }, [pads, notes, release, bpm, type, delay])
 
     const pause = call(() => {
         setStep(0)
         setPlaying(false)
         clearInterval(interval.current)
-    }, [])
-
-    const togglePad = call((group, pad) => {
-        setPads(pads => {
-            const clonedPads = pads.slice(0)
-            const padState = clonedPads[group][pad]
-            clonedPads[group] = [0, 0, 0, 0, 0, 0, 0, 0]
-            clonedPads[group][pad] = padState === 1 ? 0 : 1
-            return clonedPads
-        })
-    }, [])
+    }, [interval.current])
 
     useEffect(() => {
         pause()
         if (playing) play()
-    }, [pause, play, bpm, type, octave, playing, delay, release])
+    }, [play, pause, bpm, type, octave, playing, delay, release])
 
     return (
       <Sequencer>
@@ -86,8 +70,8 @@ export default function () {
             type="button"
             className={playing ? 'active' : ''}
             onClick={() => {
-              if (playing) pause()
-              else play()
+                if (playing) pause()
+                else play()
             }}
           >
             {playing? 'Pause': 'Play'}
@@ -101,7 +85,7 @@ export default function () {
               max="300"
               step="1"
               defaultValue={bpm}
-              onChange={e => changeBPM(e.target.value)}
+              onChange={e => 60 < bpm && bpm < 300 && setBpm(+e.target.value)}
             />
           </Sequencer.SelectWrapper>
 
@@ -126,9 +110,10 @@ export default function () {
               value={octave}
               data-label="octave"
               className="octave"
-              onChange={e => changeOctave(e.target.value)}
-            >
-
+              onChange={({target: {value}}) => {
+                setOctave(Number(value))
+                setNotes(getNotesForOctave(Number(value)))
+              }}>
               <option>1</option>
               <option>2</option>
               <option>3</option>
@@ -180,7 +165,13 @@ export default function () {
                   light={pad === 1}
                   active={j === step}
                   onClick={() => {
-                    togglePad(j, i)
+                    setPads(pads => {
+                      const clonedPads = pads.slice(0)
+                      const iState = clonedPads[j][i]
+                      clonedPads[j] = [0, 0, 0, 0, 0, 0, 0, 0]
+                      clonedPads[j][i] = iState === 1 ? 0 : 1
+                      return clonedPads
+                    })
                   }}
                 >
                 </Sequencer.Pad>

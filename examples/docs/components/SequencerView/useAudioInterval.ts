@@ -16,13 +16,6 @@ export function useAudioInterval (audioDestination: any, options) {
     const nextNoteTime = React.useRef(Infinity);
     const audioContext = audioDestination?.context;
 
-    React.useEffect(() => {
-        if (isPlaying) {
-            nextNoteIdx.current = 0;
-            nextNoteTime.current = audioContext?.currentTime ?? 0;
-        }
-    }, [audioContext, isPlaying]);
-
     useInterval(() => {
         if (audioContext == null || audioDestination == null) return;
         while (nextNoteTime.current < audioContext.currentTime + 0.5) {
@@ -62,6 +55,14 @@ export function useAudioInterval (audioDestination: any, options) {
             nextNoteTime.current += noteDuration;
         }
     }, isPlaying ? 400 : null)
+
+
+    React.useEffect(() => {
+        if (isPlaying) {
+            nextNoteIdx.current = 0;
+            nextNoteTime.current = audioContext?.currentTime ?? 0;
+        }
+    }, [audioContext, isPlaying]);
 
     return contentRef
 }

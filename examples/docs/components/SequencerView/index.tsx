@@ -1,14 +1,38 @@
-import styled from 'styled-components'
+// ref
+// https://codesandbox.io/s/sequencer-c9i45
+
+import React from 'react'
+import styled, {ThemeProvider} from 'styled-components'
+import Layout from '@theme/Layout'
+import theme from '@theme/hooks/useThemeContext';
 
 export * from './utils'
 export * from './ShapeButton'
 export * from './useAudioContext'
 export * from './useAudioInterval'
+export * from './useAudioSamples'
 export * from './useAudioScheduler'
 
-const SequencerView: any = styled.div``
+export function SequencerView (props: any) {
+    const {children, ...other} = props
+    return (
+      <SequencerView.Layout {...other}>
+        <SequencerView.Provider>
+          <SequencerView.Container>
+            {children}
+          </SequencerView.Container>
+        </SequencerView.Provider>
+      </SequencerView.Layout>
+    )
+}
 
-SequencerView.Root = styled.div`
+SequencerView.Layout = styled(Layout)`
+    padding: 50px;
+`
+
+SequencerView.Provider = (props: any) => <ThemeProvider {...props} theme={theme()}/>
+
+SequencerView.Container = styled.div`
     margin: 0 auto;
     max-width: 1000px;
     display: flex;
@@ -62,12 +86,7 @@ SequencerView.Content = styled.div`
     grid-auto-rows: minmax(80px, 1fr);
 `
 
-// SequencerView.Button = styled.div`
-//     width: 46px;
-//     height: 46px;
-// `
-
-SequencerView.NoteLine = styled.div`
+SequencerView.NoteLine = styled.div<any>`
     width: 1px;
     align-self: stretch;
     z-index: -10;
@@ -75,9 +94,3 @@ SequencerView.NoteLine = styled.div`
     ${({quarter}: any) => quarter?
         `background: #aaa`: ''}
 `
-
-// SequencerView.QuarterNoteLine = styled.div`
-//     background: #aaa;
-// `
-
-export {SequencerView}

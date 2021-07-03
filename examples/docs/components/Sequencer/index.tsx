@@ -5,7 +5,7 @@ import Notes from './Notes'
 import Layout from '@theme/Layout'
 import {lighten, darken} from 'polished'
 import {ThemeProvider} from 'styled-components'
-import useThemeContext from '@theme/hooks/useThemeContext';
+import theme from '@theme/hooks/useThemeContext';
 
 const $dark = lighten(0.02, '#121214')
 const $light = darken(0.02, "#ededeb")
@@ -32,11 +32,9 @@ Sequencer.Layout = styled(Layout)`
     font-family: 'Helvetica Neue';
     display: flex;
     flex-direction: column;
-    padding-top: 1em;
     text-align: center;
 `
-Sequencer.Provider = (props: any) =>
-    <ThemeProvider {...props} theme={useThemeContext()}/>
+Sequencer.Provider = (props: any) => <ThemeProvider {...props} theme={theme()}/>
 
 Sequencer.Container = styled.div`
     position: relative;
@@ -125,7 +123,7 @@ Sequencer.Pads = styled.div`
     flex-wrap: wrap;
 `
 
-Sequencer.Pad = styled.div`
+Sequencer.Pad = styled.div<any>`
     background: ${_ => _.theme?.isDarkTheme
         ? lighten(0.1, $dark)
         : darken(0.1, $light)};
