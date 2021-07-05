@@ -2,10 +2,10 @@ import React, {createElement as el} from 'react'
 import styled from 'styled-components'
 import Synth from './Synth'
 import Notes from './Notes'
-import Layout from '@theme/Layout'
-import {lighten, darken} from 'polished'
-import {ThemeProvider} from 'styled-components'
 import theme from '@theme/hooks/useThemeContext';
+import Layout from '@theme/Layout'
+import {ThemeProvider} from 'styled-components'
+import {lighten, darken} from 'polished'
 
 const $dark = lighten(0.02, '#121214')
 const $light = darken(0.02, "#ededeb")

@@ -2,7 +2,6 @@
 // https://codesandbox.io/s/github/webmaeistro/react-sequenc-drummachine
 import React, {useEffect, useState, useRef, useCallback as call} from 'react'
 import {Sequencer} from '../../../components/Sequencer'
-import styled from 'styled-components'
 
 const getNotesForOctave = (octave: any) =>
     Object.keys(Sequencer.Notes).reduce((state, note) => {

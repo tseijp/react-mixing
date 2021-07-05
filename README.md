@@ -1,4 +1,4 @@
-# react-audio
+# React Mixing
 
 [![ version ](
     https://img.shields.io/npm/v/react-mixing)](

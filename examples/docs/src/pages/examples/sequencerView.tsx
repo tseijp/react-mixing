@@ -38,15 +38,15 @@ const NOTES = {
 
 
 export default function () {
-    const [bpm, setBpm] = React.useState(128);
-    const [isPlaying, setIsPlaying] = React.useState(false);
-    const [[beatsPerBar, beatNote], setTimeSignature] = React.useState([4, 4]);
-    const [notes, setNotes] = React.useState<number[][]>([[], [], []]);
+    const  [bpm, setBpm] = React.useState(128),
+         [notes, setNotes] = React.useState(NOTES.house),
+     [isPlaying, setIsPlaying] = React.useState(false),
+     [signature, setSignature] = React.useState([4, 4]);
 
-
+    const [beatsPerBar, beatNote] = signature;
     const audioDestination = useAudioContext();
     const audioContext = audioDestination?.context;
-    const samples = useAudioSamples(sampleUrls, audioContext)
+    const samples = useAudioSamples(sampleUrls, audioContext);
 
     const notesCount = (beatsPerBar * NOTE) / beatNote;
     const samplesCount = sampleUrls.length;
@@ -55,7 +55,7 @@ export default function () {
     const contentRef = useAudioInterval(
         audioDestination,
         {notes, samples, isPlaying, notesCount, noteDuration, samplesCount}
-    )
+    );
 
     return (
         <SequencerView>
@@ -64,8 +64,8 @@ export default function () {
             <SequencerView.TimeSignature>
               <h4>Time signature</h4>
               <div>
-                <button onClick={() => setTimeSignature([4, 4])}>4 / 4</button>{" "}
-                <button onClick={() => setTimeSignature([3, 4])}>3 / 4</button>
+                <button onClick={() => setSignature([4, 4])}>4 / 4</button>{" "}
+                <button onClick={() => setSignature([3, 4])}>3 / 4</button>
               </div>
               <p>{beatsPerBar} / {beatNote}</p>
             </SequencerView.TimeSignature>
@@ -145,7 +145,7 @@ export default function () {
               onClick={() => {
                 setNotes(NOTES.house);
                 setBpm(128);
-                setTimeSignature([4, 4]);
+                setSignature([4, 4]);
               }}
             >
               House
@@ -154,7 +154,7 @@ export default function () {
               onClick={() => {
                 setNotes(NOTES.dubstep)
                 setBpm(140);
-                setTimeSignature([4, 4]);
+                setSignature([4, 4]);
               }}
             >
               Dubstep
@@ -163,7 +163,7 @@ export default function () {
               onClick={() => {
                 setNotes(NOTES.drumbass)
                 setBpm(176);
-                setTimeSignature([4, 4]);
+                setSignature([4, 4]);
               }}
             >
               Drum&amp;Bass
@@ -172,7 +172,7 @@ export default function () {
               onClick={() => {
                 setNotes(NOTES.reggaeton)
                 setBpm(180);
-                setTimeSignature([4, 4]);
+                setSignature([4, 4]);
               }}
             >
               Reggaeton
