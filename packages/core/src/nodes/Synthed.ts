@@ -1,8 +1,21 @@
-import {is, setHidden} from '../utils'
-import {SynthedNode} from './SynthedNode'
-import {SynthedNodes} from './SynthedNodes'
+import {FluidValue, is, setHidden} from '../utils'
+import {SynthedValue} from './SynthedValue'
+import {SynthedValues} from './SynthedValues'
 
 const $node: any = Symbol.for('Synthed:node')
+
+let __nextId__ = 1
+
+export abstract class Synthed <T = any> extends FluidValue{
+    readonly id = __nextId__++
+    // abstract key?: string
+
+    abstract get (synthed?: boolean): T | undefined
+
+    abstract set (...tags: any[]): this
+
+    abstract reset (goal?: any): this
+}
 
 export const isSynthed = <T = any>(value: any): value is Synthed<T> =>
     !!value && value[$node] === value
@@ -18,14 +31,6 @@ export const getSynthedType = (value: any) => {
     return parentNode
         ? (parentNode.constructor as any)
         : is.arr(value) || is.obj(value)
-        ? SynthedNodes
-        : SynthedNode
-}
-
-export abstract class Synthed <T = any>{
-    abstract get (synthed?: boolean): T | undefined
-
-    abstract set (...tags: any[]): this
-
-    abstract reset (goal?: any): this
+        ? SynthedValues
+        : SynthedValue
 }

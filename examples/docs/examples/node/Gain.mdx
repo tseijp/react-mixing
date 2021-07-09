@@ -1,0 +1,18 @@
+import $ from 'react-mixing/src'
+
+export default function () {
+    if (typeof window === 'undefined')
+        return null
+    const ctx = React.useMemo(() => new AudioContext(), [])
+    const [toggle, set] = React.useState(false)
+    return (
+      <button onClick={() => set((p=true) => !p)}>
+        {toggle? 'Stop': 'Start'}
+        <$.Oscillator immediate context={ctx}>
+          {from =>
+            <$.Gain from={from} value={Number(toggle)} destinate/>
+          }
+        </$.Oscillator>
+      </button>
+    )
+}

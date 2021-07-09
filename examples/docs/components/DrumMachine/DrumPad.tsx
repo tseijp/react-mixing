@@ -22,15 +22,6 @@ export function DrumPad (props: any) {
 
     const sound: any = document.getElementById(letter)
 
-    document.addEventListener("keydown", (e: any) => {
-        if (sound && e.which !== keyCode) return
-        sound.currentTime = 0;
-        sound.play();
-        onButtonPress();
-        setActive(true);
-        setTimeout(() => setActive(false), 200);
-    });
-
     const handleButtonPress = () => {
         onButtonPress();
         if (sound) {
@@ -41,17 +32,20 @@ export function DrumPad (props: any) {
         setTimeout(() => setActive(false), 200);
     };
 
+    document.addEventListener("keydown", (e: any) => {
+        if (!sound || e.which !== keyCode) return
+        sound.currentTime = 0;
+        sound.play();
+        onButtonPress();
+        setActive(true);
+        setTimeout(() => setActive(false), 200);
+    });
+
     return (
-        <DrumPad.Button id={"button"} onClick={handleButtonPress}>
-          <audio className="clip" id={letter} src={filePath}></audio>
-          <DrumPad.Light
-            id={"chan-strip-button-div" + id}
-            active={active}
-            // className={`button-light ${active ? "active" : "not-active"}`}
-          />
-          <DrumPad.Letter id={"chan-strip-button-p" + id}>
-            {letter}
-          </DrumPad.Letter>
+        <DrumPad.Button onClick={handleButtonPress}>
+          <audio className="clip" id={letter} src={filePath}/>
+          <DrumPad.Light active={active}/>
+          <DrumPad.Letter children={letter}/>
         </DrumPad.Button>
     );
 };

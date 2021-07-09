@@ -16,7 +16,7 @@ module.exports = {
     navbar: {
       title: 'react mixing 🤞',
       items: [
-        {type: 'doc', docId: 'intro', position: 'left', label: 'Docs'},
+        {type: 'doc', docId: 'intro', position: 'left', label: 'Documents'},
         {to: '/examples/intro', label: 'Examples', position: 'left'},
         {
           href: 'https://github.com/tseijp/react-mixing',
@@ -56,9 +56,21 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
+          path: 'documents',
+          routeBasePath: 'documents',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/tseijp/react-mixing/edit/master/examples/',
         },
+      },
+    ],
+  ],
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'examples',
+        path: 'examples',
+        routeBasePath: 'examples',
       },
     ],
   ],

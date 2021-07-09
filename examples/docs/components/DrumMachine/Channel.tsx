@@ -7,7 +7,9 @@ export function Channel (props: {
     label: string;
 }): null | JSX.Element
 
-export function Channel ({ id, letter, label }: any) {
+export function Channel (props: any) {
+    const { id, letter, label } = props;
+
     const sound: any = document.getElementById(letter);
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +20,7 @@ export function Channel ({ id, letter, label }: any) {
     return (
         <Channel.Div>
           <Channel.Input
-            id={"chan-strip-volume" + id}
+            id={id}
             type="range"
             min="0"
             max="10"

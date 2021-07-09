@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import Synth from './Synth'
 import Notes from './Notes'
 import theme from '@theme/hooks/useThemeContext';
-import Layout from '@theme/Layout'
 import {ThemeProvider} from 'styled-components'
 import {lighten, darken} from 'polished'
 
@@ -27,14 +26,16 @@ export function Sequencer (props: any) {
     )
 }
 
-Sequencer.Layout = styled(Layout)`
-    background: ${$dark};
+Sequencer.Layout = styled.div`
     font-family: 'Helvetica Neue';
+`
+
+Sequencer.Provider = styled((props: any) => <ThemeProvider {...props} theme={theme()}/>)`
+    background: ${$dark};
     display: flex;
     flex-direction: column;
     text-align: center;
 `
-Sequencer.Provider = (props: any) => <ThemeProvider {...props} theme={theme()}/>
 
 Sequencer.Container = styled.div`
     position: relative;

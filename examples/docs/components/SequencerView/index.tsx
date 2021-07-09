@@ -1,9 +1,7 @@
 // ref
 // https://codesandbox.io/s/sequencer-c9i45
-
 import React from 'react'
 import styled, {ThemeProvider} from 'styled-components'
-import Layout from '@theme/Layout'
 import theme from '@theme/hooks/useThemeContext';
 
 export * from './utils'
@@ -16,20 +14,13 @@ export * from './useAudioScheduler'
 export function SequencerView (props: any) {
     const {children, ...other} = props
     return (
-      <SequencerView.Layout {...other}>
-        <SequencerView.Provider>
-          <SequencerView.Container>
-            {children}
-          </SequencerView.Container>
-        </SequencerView.Provider>
-      </SequencerView.Layout>
+      <SequencerView.Provider>
+        <SequencerView.Container>
+          {children}
+        </SequencerView.Container>
+      </SequencerView.Provider>
     )
 }
-
-SequencerView.Layout = styled(Layout)`
-    padding: 50px;
-`
-
 SequencerView.Provider = (props: any) => <ThemeProvider {...props} theme={theme()}/>
 
 SequencerView.Container = styled.div`

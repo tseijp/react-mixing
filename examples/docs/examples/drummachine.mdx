@@ -1,0 +1,50 @@
+---
+sidebar_position: 2
+sidebar_label: Drum Machine
+---
+import {
+    audioSamples,
+    Channel,
+    DrumPad,
+    DrumMachine
+} from '../components/DrumMachine'
+
+export default function () {
+  const [sample, setSample] = React.useState("Play a Sample");
+  return (
+    <DrumMachine>
+      <DrumMachine.TopContainer>
+        <DrumMachine.LeftTop>
+          <h1 style={{ fontStyle: "italic" }}>SamLand TR-808</h1>
+          <DrumMachine.Display id="display">
+            Sample: {sample}
+          </DrumMachine.Display>
+        </DrumMachine.LeftTop>
+        <DrumMachine.RightTop>
+          {audioSamples.map((audioSample, i) =>
+            <DrumPad
+              id={i}
+              key={i}
+              letter={audioSample.letter}
+              keyCode={audioSample.keyCode}
+              filePath={`/react-mixing/audio/${audioSample.audio}`}
+              onButtonPress={() => setSample(audioSample.name)}
+            />
+          )}
+        </DrumMachine.RightTop>
+      </DrumMachine.TopContainer>
+      <DrumMachine.ChannelStrip>
+        {audioSamples.map((audioSample, i) => {
+          return (
+            <Channel
+              id={i.toString()}
+              key={i.toString()}
+              letter={audioSample.letter}
+              label={audioSample.name}
+            />
+          );
+        })}
+      </DrumMachine.ChannelStrip>
+    </DrumMachine>
+  );
+};

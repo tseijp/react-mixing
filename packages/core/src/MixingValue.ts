@@ -46,9 +46,15 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     advance () {
-        const synth = this.synthesis
-        each(synth.values, (node, i) => {
-            // if (node.done) return
+        let idle = false
+        let changed = false
+
+        let {synthesis: $} = this
+        let {config, toValues} = $
+
+        each($.values, (node, i) => {
+            if (node.done) return
+
         })
     }
 
@@ -57,7 +63,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     resume () {
-        return this._update({pause: true})
+        return this._update({pause: false})
     }
 
     reset () {
@@ -82,7 +88,6 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         this._stop(synth.to, cancel)
     }
 
-
     protected _set (arg: T | FluidValue<T>): Synthed | undefined  {
         const value = getFluidValue(arg)
         if (is.und(value))
@@ -98,8 +103,8 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     protected _start (...args: any) {
-        const synth = this.synthesis
-        getSynthed(this)!.reset(getFluidValue(synth.to))
+        const $ = this.synthesis
+        getSynthed(this)!.reset(getFluidValue($.to))
 
     }
 
@@ -109,32 +114,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     protected _focus (value: any) {
     }
 
-    protected _update (props: MixingProps<T>) {
-        const range = this._prepareNode(props)
-        return new Promise(resolve => this._merge(range, props, resolve))
-    }
-
-    protected _merge (range: any, props: any, resolve: any) {
-        if (props.cancel) {
-            this.stop(true)
-            return resolve(getCancelledResult(this))
-        }
-        const { key, defaultProps, synthesis: synth } = this
-        const { to: prevTo, from: prevFrom } = synth
-        let { to = prevTo, from = prevFrom } = range
-        if (props.reverse) [to, from] = [from, to]
-        from = getFluidValue(from)
-        const isFromUndefined = !is.und(prevFrom),
-                isToUndefined = !is.und(prevTo),
-               hasFromChanged = !is(from, prevFrom),
-                 hasToChanged = !is(to, prevTo)
-        if (hasToChanged)
-            this._focus(to)
-        if (hasFromChanged)
-            synth.from = from
-    }
-
-    protected _prepareNode(props: any) {
+    protected _prepare(props: any) {
         const key = this.key || ''
         let { to, from } = props
 
@@ -148,5 +128,33 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         const range = { to, from }
         this._set(getSynthed(this)? to: from)
         return range
+    }
+
+    protected _update (props: MixingProps<T>) {
+        const range = this._prepare(props)
+        return new Promise(resolve => this._merge(range, props, resolve))
+    }
+
+    protected _merge (range: any, props: any, resolve: any) {
+        if (props.cancel) {
+            this.stop(true)
+            return resolve({value: this, canceled: true, finished:false})
+        }
+        const { key, defaultProps, synthesis: $ } = this
+        const { to: prevTo, from: prevFrom } = $
+        let { to = prevTo, from = prevFrom } = range
+        if (props.reverse) [to, from] = [from, to]
+
+        from = getFluidValue(from)
+        const isFromUndefined = is.und(prevFrom),
+                isToUndefined = is.und(prevTo),
+               hasFromChanged = !is(from, prevFrom),
+                 hasToChanged = !is(to, prevTo)
+
+        if (hasToChanged)
+            this._focus(to)
+
+        if (hasFromChanged)
+            $.from = from
     }
 }

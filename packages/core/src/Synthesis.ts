@@ -1,7 +1,5 @@
-import { SynthedNode } from './nodes'
+import { SynthedValue } from './nodes'
 import { Config } from './Config'
-
-const emptyArray: readonly any[] = []
 
 export class Synthesis<T = any> {
     idle = false
@@ -11,9 +9,9 @@ export class Synthesis<T = any> {
     resumeQueue = new Set()
 
     changed = false
-    values: readonly SynthedNode[] = emptyArray
-    toValues: readonly number[] | null = null
-    fromValues: readonly number[] = emptyArray
+    readonly values: SynthedValue[] = []
+    readonly toValues: SynthedValue[] | null = null
+    readonly fromValues: SynthedValue[] = []
 
     to!: T
     from!: T

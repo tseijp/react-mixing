@@ -2,7 +2,6 @@ import React, {createElement as el} from 'react'
 import styled from 'styled-components'
 // import {lighten, darken} from 'polished'
 import theme from '@theme/hooks/useThemeContext';
-import Layout from '@theme/Layout'
 import {ThemeProvider} from 'styled-components'
 
 export * from './Channel'
@@ -24,17 +23,13 @@ const colors = {
 export function DrumMachine (props: any) {
     const {children, ...other} = props
     return (
-      <DrumMachine.Layout {...other}>
-        <DrumMachine.Provider>
-          <DrumMachine.Container>
-            {children}
-          </DrumMachine.Container>
-        </DrumMachine.Provider>
-      </DrumMachine.Layout>
+      <DrumMachine.Provider>
+        <DrumMachine.Container>
+          {children}
+        </DrumMachine.Container>
+      </DrumMachine.Provider>
     )
 }
-
-DrumMachine.Layout = styled(Layout)``
 
 DrumMachine.Provider = (props: any) => <ThemeProvider {...props} theme={{...theme(), colors}}/>
 

@@ -1,0 +1,12 @@
+import {SynthedValue} from 'react-mixing/src'
+
+export default function App () {
+    if (typeof window === 'undefined')
+        return null
+    const ctx = React.useMemo(() => new AudioContext(), [])
+    const value = React.useMemo(() => new SynthedValue())
+    console.log(value)
+    return (
+      <h1>SynthedValue</h1>
+    )
+}

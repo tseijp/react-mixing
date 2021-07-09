@@ -33,9 +33,9 @@ export function useMixings(
   props: any[] | ((i: number, ctrl: Controller) => any),
 ): any {
     const propsFn = is.fun(props) && props
-    const ref = useMemo(() => (propsFn? void 0: void 0), [propsFn])//MixingRef() : void 0), [])
-    const layoutId = useRef(0)
-    const forceUpdate = useForceUpdate()
+    const ref = useMemo(() => (propsFn? void 0: void 0), [propsFn])//?MixingRef() : void 0), [])
+    // const layoutId = useRef(0)
+    // const forceUpdate = useForceUpdate()
     interface State {
         ctrls: Controller[]
         queue: Array<() => void>

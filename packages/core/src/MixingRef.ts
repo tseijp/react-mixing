@@ -67,9 +67,9 @@ export function MixingRef<T extends Lookup = Lookup>() {
 
     ref.update = (...args) => ref.each(ctrl => ctrl.update(...args))
 
-    ref._getProps = (arg, ctrl, index) => {
-        return typeof arg === "function"? arg(index, ctrl): arg
-    }
+    ref._getProps = (arg, ctrl, index) => is.fun(arg)
+        ? arg(index, ctrl)
+        : arg
 
     return ref
 }

@@ -1,0 +1,60 @@
+// ref: https://codesandbox.io/s/github/uidotdev/post-web-audio-api/tree/b2a68eb117474cdb0ff66d4e0dc2b072ddc3c528
+// import s from 'react-mixing/src'
+
+// const whiteNoise = useAudioContext(ctx = {
+//     const buffer = ctx.createBuffer(1, SAMPLE_RATE, SAMPLE_RATE)
+//     const channelData = buffer.getChannelData(0)
+//     for (let i = 0; i < buffer.length; i++)
+//         channelData[i] = Math.random() * 2 - 1;
+// })
+export default function App () {
+    if (typeof window === 'undefined')
+        return null
+    const [toggle, set] = React.useState(false)
+    const [buffer, ctx] = React.useMemo(() => {
+        const ctx = new AudioContext()
+        const SAMPLE_RATE = ctx.sampleRate;
+        const whiteNoise = ctx.createBuffer(1, SAMPLE_RATE, SAMPLE_RATE)
+        const channelData = whiteNoise.getChannelData(0)
+        for (let i = 0; i < whiteNoise.length; i++)
+            channelData[i] = Math.random() * 2 - 1;
+        return [whiteNoise, ctx]
+    }, [])
+
+    return (
+    <button onClick={() => set((p=true) => !p)}>
+      {toggle? 'Stop': 'Start'}
+      {/*
+      <s.BufferSource context={ctx} immediate={toggle} buffer={buffer}>
+        <s.Gain context={ctx} setValueAtTime={[.05, 0]} destinate/>
+      </s.BufferSource>
+      */}
+    </button>
+    )
+}
+/*
+const audioContext = new (window.webkitAudioContext || window.AudioContext)();
+const SAMPLE_RATE = audioContext.sampleRate;
+const whiteNoiseTime = 1; // measured in seconds
+
+const whiteNoiseBuffer = audioContext.createBuffer(1, SAMPLE_RATE, SAMPLE_RATE);
+const whiteNoiseChannelData = whiteNoiseBuffer.getChannelData(0);
+for (let i = 0; i < whiteNoiseBuffer.length; i++) {
+    whiteNoiseChannelData[i] = Math.random() * 2 - 1;
+}
+
+// Connect all of our audio nodes to this gain node so their volume is lower.
+const primaryGainControl = audioContext.createGain();
+primaryGainControl.gain.setValueAtTime(0.05, 0);
+primaryGainControl.connect(audioContext.destinate);
+
+const button = document.createElement("button");
+button.innerText = "White Noise";
+button.addEventListener("click", () => {
+    const whiteNoiseSource = audioContext.createBufferSource();
+    whiteNoiseSource.buffer = whiteNoiseBuffer;
+    whiteNoiseSource.connect(primaryGainControl);
+    whiteNoiseSource.start();
+});
+document.body.appendChild(button);
+*/
