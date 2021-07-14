@@ -54,6 +54,7 @@ is.nul = (a: unknown): a is null => a === null
 is.und = (a: unknown): a is undefined => a === void 0
 is.num = (a: unknown): a is number => typeof a === 'number'
 is.str = (a: unknown): a is string => typeof a === 'string'
+is.bol = (a: unknown): a is boolean => a === true || a === false
 is.fun = ((a: unknown) => typeof a === 'function') as IsType<Function>,
 is.obj = <T = any>(a: T & any): a is PlainObject<T> => !!a && a.constructor.name === 'Object'
 

@@ -1,0 +1,77 @@
+---
+sidebar_position: 1
+sidebar_label: Audio Meter
+---
+
+import {AudioMeter} from '../../components/AudioMeter'
+
+export default function () {
+    const canvasRef = React.createRef(),
+          streamRef = React.useRef(),
+        [on, set] = useAudioMeter(canvasRef, streamRef)
+    return (
+        <AudioMeter.Root>
+          {on && (
+            <AudioMeter.Canvas ref={canvasRef} width={48} height={48}/>
+          )}
+          <AudioMeter.Button onClick={set}>
+            {on ? "MicNoneOutlined": "MicOffOutlined"}
+          </AudioMeter.Button>
+        </AudioMeter.Root>
+    );
+}
+
+export function useAudioMeter (canvasRef, streamRef, onChange=(...args) => {}) {
+    const [on, set] = React.useState(true),
+          toggleMic = React.useCallback(_ => set((prev=false) => {
+        if (prev)
+            streamRef.current.getTracks()[0]?.stop();
+        if (onChange)
+            onChange(!prev);
+        return !prev;
+    }), [onChange]);
+    /**
+     * main
+     */
+    React.useEffect(() => {
+        navigator.getUserMedia =
+            navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia;
+        if (!on || !navigator.getUserMedia) return
+        navigator.getUserMedia({audio: on}, stream => {
+            streamRef.current = stream;
+            /**
+             * init
+             */
+            const ctx = new AudioContext();
+            const analyser = ctx.createAnalyser();
+            const microphone = ctx.createMediaStreamSource(stream);
+            const javascriptNode = ctx.createScriptProcessor(2048, 1, 1);
+            analyser.smoothingTimeConstant = 0.8;
+            analyser.fftSize = 1024;
+            microphone.connect(analyser);
+            analyser.connect(javascriptNode);
+            javascriptNode.connect(ctx.destination);
+            /**
+             * set
+             */
+            const canvasContext = canvasRef.current?.getContext?.("2d");
+            javascriptNode.addEventListener("audioprocess", () => {
+                const array = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(array);
+                let values = 0;
+                for (let i = 0; i < array.length; i++)
+                    values += array[i];
+                //
+                const average = values / array.length;
+                const range = Math.max(0, Math.min(48 - average * (48 / 100), 48));
+                if (!canvasContext) return
+                canvasContext.clearRect(0, 0, 48, 48);
+                canvasContext.fillStyle = "#BadA55";
+                canvasContext.fillRect(0, range, 48, 48);
+            });
+        }, err => console.log(err)); // end fn stream
+    }, [on, canvasRef]); // end useEffect
+    return [on, toggleMic]
+}

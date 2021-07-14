@@ -78,5 +78,16 @@ function App ({onChange}) {
       </$.MediaStreamSource>
     )
 }
-render (<App/>)
+render (
+  <Mixing {...{/*~*/}}>
+    {mixing =>
+      <AudioMeter.Root>
+        {mixing.on && <Audio.Canvas style={mixing}/>}
+        <AudioMeter.Button>
+          {mixing.on ? "MicNoneOutlined": "MicOffOutlined"}
+        </AudioMeter.Button>
+      </AudioMeter.Root>
+    }
+  </Mixing>
+)
 ```

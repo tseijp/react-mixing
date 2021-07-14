@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, createElement} from 'react'
 import {SynthedValue} from './SynthedValue'
-import {is, each} from '../utils'
+import {node} from './constructors'
+import {is, each, useOnce} from '../utils'
 import {Tag, Construct, Config} from './constructors'
 
 export type AudioProps = {
@@ -8,8 +9,10 @@ export type AudioProps = {
     args: any[]
     reverse: boolean
     immediate: boolean,
-    destination: boolean,
-    children: null | JSX.Element | ((synthedNode: SynthedValue) => null | JSX.Element)
+    destinate: boolean,
+    from: any,
+    to: any,
+    children: null | JSX.Element | ((synthedValue: SynthedValue) => null | JSX.Element)
 }
 
 export function useSynthed (
@@ -19,29 +22,26 @@ export function useSynthed (
 ): null | JSX.Element
 
 export function useSynthed (Component: any, props: any, ref: any) {
-    const {tags=[], synthedNode: $} = Component
-    let {args=[], from=[], to=[], context, immediate, destinate, children, ...other} = props
+    const {tags=[], synthedValue: $} = Component
+    let {args=[], from=[], to=[], on, context, children, ...other} = props
 
-    if (to === true)
-        destinate = to
+    useOnce(() => void ($.context = context))
+    useOnce(() => void ($.set(node(tags, ...args))))
 
-    $.context = context
-    $.set(tags, ...args)
+    useEffect(() => each(from, node => $.parents.add(node)), [from])
+    useEffect(() => each(to, node => node.parents.add($)), [to])
 
+    useEffect(() => void (is.bol(on) && $.immediate(on)), [on])
+    useEffect(() => void (is.bol(to) && $.destinate(to)), [to])
 
-    useEffect(() => $.destinate(destinate), [$, destinate])
-    useEffect(() => $.immediate(immediate), [$, immediate])
-    useEffect(() => each(from, node => $.parents.add(node)))
-    useEffect(() => each(to, node => node?.type?.synthedNode?.parents.add?.($)))
-
-    return React.createElement(props.as || 'div', { ...other, ref }, children($))
+    return createElement(props.as || 'div', { ...other, ref}, children($))
 }
 
 export interface Component extends Construct {
     tags?: Tag<Component>,
     attrs?: Attr[],
     config?: Config,
-    synthedNode?: SynthedValue,
+    synthedValue?: SynthedValue,
     displayName?: string | null,
 }
 
@@ -58,7 +58,7 @@ export function withSynthed (config: any, tags: any) {
             ? Array.prototype.concat(tag.attrs, config.attrs).filter(Boolean)
             : config.attrs || []
 
-    const synthedNode = new SynthedValue()
+    const synthedValue = new SynthedValue()
 
     let Component: Component
 
@@ -70,7 +70,7 @@ export function withSynthed (config: any, tags: any) {
     Component.tags = tags
     Component.attrs = attrs
     Component.config = config
-    Component.synthedNode = synthedNode
+    Component.synthedValue = synthedValue
     Component.displayName = displayName
     Component.toString = () => `.${Component.displayName}`;
 

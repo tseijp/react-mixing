@@ -24,7 +24,7 @@ const initState = {
 
 export class MixingValue <T extends any = any> extends FrameValue<T> {
     key?: string
-    synthesis = new Synthesis()
+    synth = new Synthesis()
     queue: MixingUpdate<T>[] = []
     defaultProps = {}
 
@@ -49,7 +49,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         let idle = false
         let changed = false
 
-        let {synthesis: $} = this
+        let {synth: $} = this
         let {config, toValues} = $
 
         each($.values, (node, i) => {
@@ -82,10 +82,10 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     stop (cancel=false) {
-        const synth = this.synthesis
-        synth.pauseQueue.clear()
-        synth.resumeQueue.clear()
-        this._stop(synth.to, cancel)
+        const $ = this.synth
+        $.pauseQueue.clear()
+        $.resumeQueue.clear()
+        this._stop($.to, cancel)
     }
 
     protected _set (arg: T | FluidValue<T>): Synthed | undefined  {
@@ -103,12 +103,12 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     protected _start (...args: any) {
-        const $ = this.synthesis
+        const $ = this.synth
         getSynthed(this)!.reset(getFluidValue($.to))
-
     }
 
     protected _stop (...args: any) {
+
     }
 
     protected _focus (value: any) {
@@ -140,7 +140,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
             this.stop(true)
             return resolve({value: this, canceled: true, finished:false})
         }
-        const { key, defaultProps, synthesis: $ } = this
+        const { key, defaultProps, synth: $ } = this
         const { to: prevTo, from: prevFrom } = $
         let { to = prevTo, from = prevFrom } = range
         if (props.reverse) [to, from] = [from, to]

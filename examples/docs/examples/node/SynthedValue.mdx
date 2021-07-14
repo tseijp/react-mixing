@@ -4,9 +4,19 @@ export default function App () {
     if (typeof window === 'undefined')
         return null
     const ctx = React.useMemo(() => new AudioContext(), [])
+    const osc = React.useMemo(() => ctx.createOscillator(), [ctx])
     const value = React.useMemo(() => new SynthedValue())
     console.log(value)
+    const handle = React.useCallback(() => {
+        // value.context = ctx
+        // value.parents.add(osc)
+        // value.set(ctx.createGain())
+        // value.destinate()
+        // value.immediate()
+    }, [value])
     return (
-      <h1>SynthedValue</h1>
+      <button onClick={handle}>
+        {!!value? "on": 'off'}
+      </button>
     )
 }

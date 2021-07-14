@@ -1,7 +1,5 @@
 import React, {createElement as el} from 'react'
 import styled from 'styled-components'
-import Synth from './Synth'
-import Notes from './Notes'
 import theme from '@theme/hooks/useThemeContext';
 import {ThemeProvider} from 'styled-components'
 import {lighten, darken} from 'polished'
@@ -153,7 +151,3 @@ Sequencer.Pad = styled.div<any>`
         box-shadow: 0 0 12px 0 rgba(${$primary}, 0.8);
     `}
 `
-
-Sequencer.Notes = Notes
-
-Sequencer.Synth = Synth

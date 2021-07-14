@@ -4,10 +4,6 @@ import styled from 'styled-components'
 import theme from '@theme/hooks/useThemeContext';
 import {ThemeProvider} from 'styled-components'
 
-export * from './Channel'
-export * from './DrumPad'
-export * from './AudioSamples'
-
 const colors = {
     red: "#E72E2E",
     orange: "#F8A125",
@@ -23,7 +19,7 @@ const colors = {
 export function DrumMachine (props: any) {
     const {children, ...other} = props
     return (
-      <DrumMachine.Provider>
+      <DrumMachine.Provider {...other}>
         <DrumMachine.Container>
           {children}
         </DrumMachine.Container>

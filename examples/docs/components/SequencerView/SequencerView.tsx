@@ -4,13 +4,6 @@ import React from 'react'
 import styled, {ThemeProvider} from 'styled-components'
 import theme from '@theme/hooks/useThemeContext';
 
-export * from './utils'
-export * from './ShapeButton'
-export * from './useAudioContext'
-export * from './useAudioInterval'
-export * from './useAudioSamples'
-export * from './useAudioScheduler'
-
 export function SequencerView (props: any) {
     const {children, ...other} = props
     return (

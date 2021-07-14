@@ -2,14 +2,24 @@
 sidebar_position: 4
 sidebar_label: Sequencer View
 ---
+
 import {
-    range,
     ShapeButton,
     SequencerView,
+} from '../../components/SequencerView'
+
+import {
     useAudioSamples,
     useAudioInterval,
     useAudioContext,
-} from '../components/SequencerView'
+} from '../../hooks'
+
+export function range (length=0) {
+    const result = new Array(length)
+    while (length--)
+        result[length] = length
+    return result
+}
 
 export const sampleUrls = [
     "https://halodzwieki.s3.eu-west-3.amazonaws.com/sounds/rytm/e/kick.mp3",
@@ -45,16 +55,13 @@ export default function () {
          [notes, setNotes] = React.useState(NOTES.house),
      [isPlaying, setIsPlaying] = React.useState(false),
      [signature, setSignature] = React.useState([4, 4]);
-    //
     const [beatsPerBar, beatNote] = signature;
     const audioDestination = useAudioContext();
     const audioContext = audioDestination?.context;
     const samples = useAudioSamples(sampleUrls, audioContext);
-    //
-    const notesCount = (beatsPerBar * NOTE) / beatNote;
-    const samplesCount = sampleUrls.length;
-    const noteDuration = (60 / bpm) * (beatNote / NOTE);
-    //
+    const notesCount = (beatsPerBar * NOTE) / beatNote,
+        samplesCount = sampleUrls.length,
+        noteDuration = (60 / bpm) * (beatNote / NOTE);
     const contentRef = useAudioInterval(
         audioDestination,
         {notes, samples, isPlaying, notesCount, noteDuration, samplesCount}
@@ -136,40 +143,32 @@ export default function () {
             </button>
           </p>
           <div>
-            <button
-              onClick={() => {
+            <button onClick={() => {
                 setNotes(NOTES.house);
                 setBpm(128);
                 setSignature([4, 4]);
-              }}
-            >
+            }}>
               House
             </button>{" "}
-            <button
-              onClick={() => {
+            <button onClick={() => {
                 setNotes(NOTES.dubstep)
                 setBpm(140);
                 setSignature([4, 4]);
-              }}
-            >
+            }}>
               Dubstep
             </button>{" "}
-            <button
-              onClick={() => {
+            <button onClick={() => {
                 setNotes(NOTES.drumbass)
                 setBpm(176);
                 setSignature([4, 4]);
-              }}
-            >
+            }}>
               Drum&amp;Bass
             </button>{" "}
-            <button
-              onClick={() => {
+            <button onClick={() => {
                 setNotes(NOTES.reggaeton)
                 setBpm(180);
                 setSignature([4, 4]);
-              }}
-            >
+            }}>
               Reggaeton
             </button>
           </div>
