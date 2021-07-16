@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import {useOnce} from 'react-mixing/src'
 
 export function Channel (props: {
     id: string;
@@ -10,12 +11,14 @@ export function Channel (props: {
 export function Channel (props: any) {
     const { id, letter, label } = props;
 
-    const sound: any = document.getElementById(letter);
+    const [sound, setSound]: any = React.useState(null);
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (sound)
             sound.volume = parseInt(e.target.value, 10) / 10;
     };
+
+    useOnce(() => void setSound(document.getElementById(letter)))
 
     return (
         <Channel.Div>

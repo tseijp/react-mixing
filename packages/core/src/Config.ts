@@ -5,14 +5,21 @@ export const defaultConfig = {
     grid: 0,   // the nearest Beatgrid point
     loop: 0,   // auto beat loop
     jump: 0,   // ?
+    step: 0,   // ? Sequencer
+    steps: 0,  // ? Sequencer
+    octave: 4, // ? Sequencer
     rate: 1,   // ?
+    release: 4,// ? Sequencer
     range: 1,  // the tempo range
     speed: 1,  // playing speed display
     pitch: 1,  // the pitch value
+    playing: false, // ? Sequencer
+    delay: false,   // ? Sequencer
     SLIP: false,
     Q: false,
-    language: 'en',
-    title: 'Anonymous'
+    language: 'en',     // todo: AudioSpeechAPI
+    title: 'Anonymous', // ?
+    type: 'sine',       // ?
 }
 
 export class Config {
@@ -28,7 +35,11 @@ export class Config {
     Q!: boolean
     language!: string
 
-    constructor() {
-        Object.assign(this, defaultConfig)
+    constructor(config: Partial<Config> = {}) {
+        Object.assign(this, defaultConfig, config)
+    }
+
+    set (config: Partial<Config> = {}) {
+        return Object.assign(this, config)
     }
 }

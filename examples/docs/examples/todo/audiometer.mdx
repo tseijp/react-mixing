@@ -8,7 +8,7 @@ import {AudioMeter} from '../../components/AudioMeter'
 export default function () {
     const canvasRef = React.createRef(),
           streamRef = React.useRef(),
-        [on, set] = useAudioMeter(canvasRef, streamRef)
+          [on, set] = useAudioMeter(canvasRef, streamRef)
     return (
         <AudioMeter.Root>
           {on && (

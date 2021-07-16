@@ -4,36 +4,36 @@ import {SynthedValue} from './SynthedValue'
 import {Synthed, isSynthed} from './Synthed'
 
 export class SynthedValues extends Synthed {
-    nodes!: SynthedValue[]
+    values!: SynthedValue[]
 
     get (synthed?: boolean) {
-        const nodes: Lookup = {}
-        each(this.nodes, (node, key) => {
-            if (isSynthed(nodes))
-                (nodes as any)[key] = node.get()
+        const values: Lookup = {}
+        each(this.values, (node, key) => {
+            if (isSynthed(values))
+                (values as any)[key] = node.get()
             else if (!synthed)
-                nodes[key] = nodes
+                values[key] = values
         })
-        return nodes
+        return values
     }
 
     set (...args: any[]) {
-        this.nodes = is.arr(args[0])
+        this.values = is.arr(args[0])
             ? makeFromArray(...args)
             : makeFromObject(...args)
         return this
     }
 
     reset () {
-        if (this.nodes)
-            each(this.nodes, node => node.reset())
+        if (this.values)
+            each(this.values, node => node.reset())
         return this
     }
 }
 
 function makeFromArray (...args: any[]): SynthedValue[] {
     const nodeSet = new Set<SynthedValue>()
-    if (this.nodes.length == args.length)
+    if (this.values.length == args.length)
         each(args, node => nodeSet.add(node))
     return Array.from(nodeSet)
 }

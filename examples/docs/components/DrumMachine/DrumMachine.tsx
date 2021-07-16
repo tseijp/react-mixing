@@ -1,6 +1,5 @@
-import React, {createElement as el} from 'react'
+import React from 'react'
 import styled from 'styled-components'
-// import {lighten, darken} from 'polished'
 import theme from '@theme/hooks/useThemeContext';
 import {ThemeProvider} from 'styled-components'
 
@@ -27,7 +26,8 @@ export function DrumMachine (props: any) {
     )
 }
 
-DrumMachine.Provider = (props: any) => <ThemeProvider {...props} theme={{...theme(), colors}}/>
+DrumMachine.Provider = (props: any) =>
+    <ThemeProvider {...props} theme={{...theme(), colors}}/>
 
 DrumMachine.Container = styled.div`
     position: relative;

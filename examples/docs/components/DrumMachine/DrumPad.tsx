@@ -11,16 +11,15 @@ export function DrumPad(props: {
 
 export function DrumPad (props: any) {
     const {
-        id,
         filePath,
         letter,
         keyCode,
-        onButtonPress
+        onButtonPress,
+        ...other
     } = props
 
     const [active, setActive] = useState(false);
-
-    const sound: any = document.getElementById(letter)
+    const [sound, setSound]: any = React.useState(null)
 
     const handleButtonPress = () => {
         onButtonPress();
@@ -32,17 +31,23 @@ export function DrumPad (props: any) {
         setTimeout(() => setActive(false), 200);
     };
 
-    document.addEventListener("keydown", (e: any) => {
-        if (!sound || e.which !== keyCode) return
-        sound.currentTime = 0;
-        sound.play();
-        onButtonPress();
-        setActive(true);
-        setTimeout(() => setActive(false), 200);
-    });
+    React.useEffect(() => {
+        setSound(document.getElementById(letter))
+    })
+
+    React.useEffect(() => {
+        document.addEventListener("keydown", (e: any) => {
+            if (!sound || e.which !== keyCode) return
+            sound.currentTime = 0;
+            sound.play();
+            onButtonPress();
+            setActive(true);
+            setTimeout(() => setActive(false), 200);
+        });
+    }, [keyCode, sound, onButtonPress])
 
     return (
-        <DrumPad.Button onClick={handleButtonPress}>
+        <DrumPad.Button onClick={handleButtonPress} {...other}>
           <audio className="clip" id={letter} src={filePath}/>
           <DrumPad.Light active={active}/>
           <DrumPad.Letter children={letter}/>
@@ -61,8 +66,8 @@ DrumPad.Button = styled.button`
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-color: ${({ theme }) => theme.colors.grey};
-    border: 0.2em groove ${({ theme }) => theme.colors.black};
+    background-color: ${({ theme }) => theme.colors?.grey};
+    border: 0.2em groove ${({ theme }) => theme.colors?.black};
 `;
 
 DrumPad.Light = styled.div<any>`

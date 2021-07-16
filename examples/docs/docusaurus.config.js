@@ -31,7 +31,7 @@ module.exports = {
         {
           title: 'Pages',
           items: [
-            {label: 'Docs', to: '/docs/intro'},
+            {label: 'Docs', to: '/documents/intro'},
           ],
         },
         {
