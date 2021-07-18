@@ -50,7 +50,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         let changed = false
 
         let {synth: $} = this
-        let {config, toValues} = $
+        let {config, context, toValues} = $
 
         each($.values, (node, i) => {
             if (node.done) return

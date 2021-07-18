@@ -1,5 +1,6 @@
-import { SynthedValue } from './nodes'
 import { Config } from './Config'
+import { Context } from './Context'
+import { SynthedValue } from './nodes'
 
 export class Synthesis<T = any> {
     idle = false
@@ -16,5 +17,6 @@ export class Synthesis<T = any> {
     to!: T
     from!: T
     config = new Config()
+    context = new Context()
     immediate = false
 }

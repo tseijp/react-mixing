@@ -99,9 +99,9 @@ export function useMixings(
     //     })
     // })
     //
-    // useOnce(() => () => {
-    //     each(state.ctrls, ctrl => ctrl.stop(true))
-    // })
+    useOnce(() => () => {
+        each(state.ctrls, ctrl => ctrl.stop(true))
+    })
 
     const mixings = ctrls.current.map((ctrl, i) => getMixings(ctrl, updates[i]))
     const values = mixings.map(x => ({ ...x }))

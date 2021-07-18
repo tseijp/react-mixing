@@ -1,35 +1,37 @@
 import {is} from './utils'
 
+const G = {} as any // TODO global value
+
 export class Context {
-    audioContext: AudioContext
+    readonly _context: AudioContext
 
     constructor (ctx?: AudioContext) {
-        this.audioContext = ctx || new AudioContext()
+        this._context = ctx || G.context || new AudioContext()
     }
 
     set onstatechange (onstatechange: any) {
-        this.audioContext.onstatechange = onstatechange
+        this._context.onstatechange = onstatechange
     }
 
     createNode (...args: any[]) {
         return createNode(this, ...args)
     }
 
-    get baseLatency () {return this.audioContext.baseLatency}
+    get baseLatency () {return this._context.baseLatency}
 
-    get outputLatency () {return this.audioContext.outputLatency}
+    get outputLatency () {return this._context.outputLatency}
 
-    get audioWorklet () {return this.audioContext.audioWorklet}
+    get audioWorklet () {return this._context.audioWorklet}
 
-    get currentTime () {return this.audioContext.currentTime}
+    get currentTime () {return this._context.currentTime}
 
-    get destination () {return this.audioContext.destination}
+    get destination () {return this._context.destination}
 
-    get listener () {return this.audioContext.listener}
+    get listener () {return this._context.listener}
 
-    get sampleRate () {return this.audioContext.sampleRate}
+    get sampleRate () {return this._context.sampleRate}
 
-    get state () {return this.audioContext.state}
+    get state () {return this._context.state}
 }
 
 function createNode (ctx: any, target?: any) {

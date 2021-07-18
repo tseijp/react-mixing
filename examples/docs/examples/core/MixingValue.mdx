@@ -1,0 +1,70 @@
+---
+sidebar_position: 1
+sidebar_label: MixingValue
+---
+
+<App/>
+
+one node
+
+```js
+render (
+  <Mixing on='Oscillator'>
+    {osc =>
+      <Mixing as='Gain' on={osc} to>
+        {vga =>
+          <Mixing as='Delay' on={vga} to/>
+        }
+      </Mixing>
+    }
+  </Mixing>
+)
+```
+
+sequencer
+
+```js
+render (
+  <Mixing
+    as={{osc: 'Oscillator', vga: 'Gain', dly: 'Delay'}} // such as SynthedObject
+    to={{osc: _ => _.vga, vga: _ => _.dly, dly: false}} // using functional value
+    context={context.current}
+    config={{bpm: 150, release: 100}}
+    onStep={_ => void (_.osc.frequency = pads[_.config.step])}
+  >
+    {mixing =>
+      <a.div>{mixing.vga}</a.div>
+    }
+  </Mixing>
+)
+```
+
+import {useEffect, useState, useRef} from 'react'
+import {useForceUpdate, Config, MixingValue} from 'react-mixing/src'
+
+export function App () {
+    const mixing = useRef(null)
+    const context = useRef(null)
+    const forceUpdate = useForceUpdate()
+    const [cfg, setCfg] = useState(new Config())
+    const [pads, setPads] = useState([0, 1, 2, /**/])
+    useEffect(() => {
+        if (!context.current) return
+        const mix = new MixingValue({
+            as: {osc: 'Oscillator', vga: 'Gain', dly: 'Delay'},
+            to: {osc: _ => _.vga, vga: [_ => _.dly, true], dly: true},
+            context: context.current,
+            config: {...cfg, loop: 8},
+            onStep: _ => void (_.osc.frequency = pads[_.config.step]),
+        })
+    })
+    return (
+        <button onClick={() => {
+            context.current = new AudioContext()
+            setCfg(p => p.set({playing: !p.playing}))
+            forceUpdate()
+        }}>
+          {cfg.playing? 'Pause': 'Play'}
+        </button>
+    )
+}

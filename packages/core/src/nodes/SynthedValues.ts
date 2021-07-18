@@ -4,7 +4,7 @@ import {SynthedValue} from './SynthedValue'
 import {Synthed, isSynthed} from './Synthed'
 
 export class SynthedValues extends Synthed {
-    values!: SynthedValue[]
+    values!: SynthedValue[] // or new Map<SynthedValue, key>([])
 
     get (synthed?: boolean) {
         const values: Lookup = {}

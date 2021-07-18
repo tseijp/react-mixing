@@ -6,7 +6,7 @@ export const defaultConfig = {
     loop: 0,   // auto beat loop
     jump: 0,   // ?
     step: 0,   // ? Sequencer
-    steps: 0,  // ? Sequencer
+    steps: 8,  // ? Sequencer
     octave: 4, // ? Sequencer
     rate: 1,   // ?
     release: 4,// ? Sequencer

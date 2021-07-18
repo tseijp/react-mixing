@@ -10,8 +10,8 @@ export type AudioProps = {
     reverse: boolean
     immediate: boolean,
     destinate: boolean,
-    from: any,
-    to: any,
+    on: boolean | SynthedValue[],
+    to: boolean | SynthedValue[],
     children: null | JSX.Element | ((synthedValue: SynthedValue) => null | JSX.Element)
 }
 
@@ -23,16 +23,12 @@ export function useSynthed (
 
 export function useSynthed (Component: any, props: any, ref: any) {
     const {tags=[], synthedValue: $} = Component
-    let {args=[], from=[], to=[], on, context, children, ...other} = props
+    let {args=[], on=[], to=[], context, children, ...other} = props
 
     useOnce(() => void ($.context = context))
-    useOnce(() => void ($.set(node(tags, ...args))))
-
-    useEffect(() => each(from, node => $.parents.add(node)), [from])
-    useEffect(() => each(to, node => node.parents.add($)), [to])
-
-    useEffect(() => void (is.bol(on) && $.immediate(on)), [on])
-    useEffect(() => void (is.bol(to) && $.destinate(to)), [to])
+    useOnce(() => void ($.set(tags, ...args)))
+    // useEffect(() => void (is.arr(on)? $.resume(on): $.on(on)), [on])
+    // useEffect(() => void (is.arr(to)? $.resumed(to): $.to(to)), [to])
 
     return createElement(props.as || 'div', { ...other, ref}, children($))
 }

@@ -1,10 +1,10 @@
 ---
-sidebar_position: 1
-sidebar_label: SynthedValue
+sidebar_position: 3
+sidebar_label: sequencer
 ---
 
 import {useEffect, useState, useRef, useMemo, useCallback as call} from 'react'
-import {is, Config, SynthedValue} from 'react-mixing/src'
+import {is, Config, MixingValue} from 'react-mixing/src'
 import {Sequencer as $} from '../../components/Sequencer'
 
 export const defaultPads = [
@@ -51,74 +51,37 @@ export const getNotesForOctave = (octave) =>
 export default function () {
     // for performance
     const context = useRef(null),
-         interval = useRef(null);
-    // main status
-    const [cfg, setCfg] = useState(new Config({bpm: 150, octave: 4, release: 100})),
+         interval = useRef(null),
+           mixing = useRef(null),
+          [cfg, setCfg] = useState(new Config({bpm: 150, octave: 4, release: 100})),
          [step, setStep] = useState(0),
         [steps, setSteps] = useState(8),
         [notes, setNotes] = useState(getNotesForOctave(4)),
          [pads, setPads] = useState(defaultPads);
-    // main process
-    const handle = call(nextPads => {
-        if (nextPads.length <= 0) return
-        const ctx = context.current || new AudioContext()
-        const oscNode = ctx.createOscillator(),
-              dlyNode = ctx.createDelay(),
-              vcaNode = ctx.createGain();
-        oscNode.type = cfg.type.toLowerCase();
-        oscNode.frequency.value = nextPads[0]
-        dlyNode.delayTime.value = cfg.delay? cfg.bpm / 2000: 0;
-        vcaNode.gain.value = 1;
-        // Connections
-        oscNode.connect(vcaNode)
-        vcaNode.connect(dlyNode)
-        vcaNode.connect(ctx.destination)
-        dlyNode.connect(ctx.destination)
-        // start
-        oscNode.start(0)
-        setTimeout(() => {
-            vcaNode.gain.setTargetAtTime(0, ctx.currentTime, 0.015)
-        }, release)
-        //       osc = new SynthedValue().set(ctx.createOscillator()),
-        //       dly = new SynthedValue().set(ctx.createDelay()),
-        //       vca = new SynthedValue().set(ctx.createGain());
-        // osc.node.type = cfg.type.toLowerCase();
-        // osc.node.frequency.value = nextPads[0]
-        // dly.node.delayTime.value = cfg.delay? cfg.bpm / 2000: 0;
-        // vca.node.gain.value = 1;
-        // osc.parents.add(vca)
-        // vca.parents.add(dly)
-        // vca.destinate()
-        // dly.destinate()
-        // osc.immediate()
-        // setTimeout(() => {
-        //     vca.node.gain.setTargetAtTime(0, ctx.currentTime, 0.015)
-        // }, cfg.release)
-        context.current = ctx
-    }, [cfg]);
     // update config and force updating
     const set = config => setCfg(prev => {
-        if(is.fun(config))
-            config = config(prev)
+        if (is.fun(config)) config = config(prev)
         return new Config(Object.assign(prev, config))
     })
-    // start interval
-    const play = () => {
-        const notesArray = Object.keys(notes).map(key => notes[key])
-        interval.current = setInterval(() => void setStep(p => {
-            const nextStep = p < steps - 1? p + 1: 0
-            const nextPads = pads[nextStep]
-                .map((pad, i) => pad === 1? notesArray[i]: null)
-                .filter(Boolean)
-            handle(nextPads)
-            return nextStep
-        }), (60 * 1000) / cfg.bpm / 2)
-    }
-    // reset status
-    const pause = () => void (setStep(0), clearInterval(interval.current))
-    // switch play and pause using cfg
-    useEffect(() => void (pause(), cfg.playing && play()), [cfg])
-    // render
+    useEffect(() => {
+        mixing.current?.stop()
+        if (!cfg.playing || true) return
+        /**
+         * TODO HERE
+         */
+        mixing.current?.start()
+        const ctx = context.current || new AudioContext(),
+              itm = {osc: 'Oscillator', vca: 'Gain', dly: 'Delay'},
+              mix = mixing.current || new MixingValue({config: cfg, ...itm});
+        const {osc, vca, dly} = mix;
+        // osc.set({type: cfg.type.toLowerCase(), frequency: nextPads[0]})
+        // dly.set({delayTime: cfg.delay? cfg.bpm / 2000: 0})
+        // vca.set({gain: {value: 1, targetAtTime: [0, ctx.currentTime + cfg.release, .015]}})
+        vca.resume(osc.on()).to()
+        dly.resume(vca).to()
+        context.current = ctx
+        mixing.current = mix
+    }, [cfg, pads])
     const {playing, bpm, type, octave, release, delay} = cfg
     return (
       <$>
@@ -133,10 +96,7 @@ export default function () {
             <span>BPM</span>
             <input
               type="number" min="80" max="300" step="1" defaultValue={bpm}
-              onChange={e => {
-                if (60 < bpm && bpm < 300)
-                  set({bpm: +e.target.value})
-              }}
+              onChange={e => (60 < bpm && bpm < 300) && set({bpm: +e.target.value})}
             />
           </$.SelectWrapper>
           <$.SelectWrapper>
