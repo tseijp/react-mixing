@@ -1,0 +1,23 @@
+---
+sidebar_position: 1
+sidebar_label: useMixings
+---
+
+# useMixings
+
+### Overview
+
+```jsx
+import { useMixings, animated } from 'react-mixing'
+
+const [synth, api] = useMixing(() => ({ value: 1 }))
+
+api.start({ opacity: toggle ? 1 : 0 })
+api.stop()
+
+render (
+  <animated.div style={synth}>
+    i will fade
+  </animated.div>
+)
+```

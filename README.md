@@ -36,14 +36,14 @@ yarn start
 ```
 
 - open browser and visit [localhost:3000](http://localhost:3000)
-- Now you can go to our [demo](http://tsei.jp/rmix), and try its usage.
+- Now you can go to our [demo](http://tseijp.github.io/react-mixing/examples), and try its usage.
 
 
 ### Documentation and Examples
 
-More info about the project can be found [here](https://tsei.jp/rmix/docs/intro.md).
+More info about the project can be found [here](https://tseijp.github.io/react-mixing/documents/intro.md).
 
-Examples and tutorials can be found [here](https://tsei.jp/rmix/examples/intro.md).
+Examples and tutorials can be found [here](https://tseijp.github.io/react-mixing/examples/intro.md).
 
 <br/>
 <hr/>

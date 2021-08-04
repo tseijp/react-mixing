@@ -4,9 +4,15 @@ import styled, {css} from 'styled-components'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import {Home} from '../../components/Home'
 import {Live} from '../../components/Live'
+import parsed from 'parsed-path'
 
 const Code = `
-    render(<>HELLO</>)
+const Github = parsed.https\`github.com\`\`tseijp\`\`parsed-path\`
+render(
+  <Github as={Button}>
+    Github
+  </Github>
+)
 `.trim();
 
 export default function App () {
@@ -21,7 +27,7 @@ export default function App () {
             <p>react</p>
             <p>mixing</p>
           </Home.Header>
-          <Live code={Code} noInline scope={{ React, Button }}>
+          <Live code={Code} noInline scope={{ React, Button, parsed }}>
             <Title>
               <Tagline></Tagline>
               <SupportingTagline>

@@ -1,16 +1,26 @@
 ---
-sidebar_position: 0
-sidebar_label: Synthed Node
+sidebar_position: 1
+sidebar_label: SynthedValue
 ---
 
-# Synthed Node
+# SynthedValue
+
 
 import {Live} from '../../components/Live'
-import {animated} from 'react-spring'
+import {SynthedValue} from 'react-mixing/src'
 
-<Live.Card scope={{React, animated}} code={`
+<Live.Card scope={{React, SynthedValue}} code={`
+const osc = SynthedValue()
+const vca = SynthedValue()
+const handle = () => {
+    const ctx = new AudioContext()
+    vca.effect(osc, ctx.destination)
+    osc.on()
+}
 render (
-    <button>start</button>
+  <button onClick={handle}>
+    start
+  </button>
 )
 `.trim()}/>
 

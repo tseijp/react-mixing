@@ -1,0 +1,45 @@
+---
+sidebar_position: 0
+sidebar_label: synthed
+---
+
+# synthed
+
+- HtmlElement
+
+```js
+synthed('div')
+
+synthed(Components)
+```
+
+# node
+
+- named nodes
+```js
+node('gain')
+```
+
+- constructor
+```js
+node(ctx => ctx.createGain())
+```
+
+- Audio worklet file
+```js
+node('webworker.js')
+```
+
+- TODO: js text
+```js
+const whiteNoiseNode = node`
+process (inputs, outputs, parameters) {
+    const output = outputs[0]
+    output.forEach(channel => {
+        for (let i = 0; i < channel.length; i++)
+            channel[i] = Math.random() * 2 - 1
+    })
+    return true
+}
+`
+```

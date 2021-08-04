@@ -27,8 +27,7 @@ export function useSynthed (Component: any, props: any, ref: any) {
 
     useOnce(() => void ($.context = context))
     useOnce(() => void ($.set(tags, ...args)))
-    // useEffect(() => void (is.arr(on)? $.resume(on): $.on(on)), [on])
-    // useEffect(() => void (is.arr(to)? $.resumed(to): $.to(to)), [to])
+    useEffect(() => $.effect(on, to), [on, to])
 
     return createElement(props.as || 'div', { ...other, ref}, children($))
 }
@@ -66,8 +65,8 @@ export function withSynthed (config: any, tags: any) {
     Component.tags = tags
     Component.attrs = attrs
     Component.config = config
-    Component.synthedValue = synthedValue
     Component.displayName = displayName
+    Component.synthedValue = synthedValue
     Component.toString = () => `.${Component.displayName}`;
 
     return Component

@@ -17,7 +17,7 @@ render (
 
 ## Methods
 
-*`each((mixing, key) => void): this`*
+- __`each((mixing, key) => void): this`__
 
 ```js
 Controller.each((mixing, key) =>
@@ -25,44 +25,43 @@ Controller.each((mixing, key) =>
 )
 ```
 
-*`get(): T`*
+- __`get(): T`__
 
 ```js
 const mixingValues controller.get()
 ```
 
-*`pause (key?): this`*
+- __`pause (key?): this`__
 
 ```js
 controller.pause()
 ```
 
-*`resume(keys?): this`*
+- __`resume(keys?): this`__
 
 ```js
 controller.resume()
 ```
 
-*`set(values): void`*
+- __`set(values): void`__
 
 ```js
-controller.ests(et{opacity: 1})
+controller.set(et{opacity: 1})
 ```
 
-
-*`start(props?): Promise`*
+- __`start(props?): Promise`__
 
 ```js
 controller.start({opacity: 1})
 ```
 
-*`sop(keys?): this`*
+- __`sop(keys?): this`__
 
 ```js
 controller.stop(['opacity'])
 ```
 
-*`update(props?): this`*`
+- __`update(props?): this`__`
 
 ```js
 controller.update({opacity: 1})
@@ -70,8 +69,8 @@ controller.update({opacity: 1})
 
 ## Properties
 
-*`queue: SpringUpdate<T>[]`*
+__`queue: SpringUpdate<T>[]`__
 
-*`refs: MixingRef<T>[]`*
+__`refs: MixingRef<T>[]`__
 
-*`mixings: MixingValuees<T>`*
+__`mixings: MixingValuees<T>`__

@@ -81,15 +81,17 @@ export function App () {
         if (nextPads.length <= 0) return
         // init
         const ctx = context.current || new AudioContext(),
-              osc = new SynthedValue().set(ctx.createOscillator()),
-              dly = new SynthedValue().set(ctx.createDelay()),
-              vca = new SynthedValue().set(ctx.createGain());
+              osc = new SynthedValue(ctx.createOscillator()),
+              dly = new SynthedValue(ctx.createDelay()),
+              vca = new SynthedValue(ctx.createGain());
+        // osc.set({type: cfg.type.toLowerCase()})
+        // dly.set({frequency: nextPads[0], delayTime:  cfg.delay? cfg.bpm / 2000: 0})
+        // vca.set({gain: 1})
         osc.node.type = cfg.type.toLowerCase();
         osc.node.frequency.value = nextPads[0]
         dly.node.delayTime.value = cfg.delay? cfg.bpm / 2000: 0;
         vca.node.gain.value = 1;
-        vca.resume(osc.on()).to()
-        dly.resume(vca).to()
+        vca.to().effect(osc, dly.to()) // !!!
         setTimeout(() => {
             vca.node.gain.setTargetAtTime(0, ctx.currentTime, 0.015)
         }, cfg.release)

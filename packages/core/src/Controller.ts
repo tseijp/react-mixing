@@ -69,14 +69,14 @@ export class Controller<T extends Lookup = Lookup> {
     set (values: Partial<T>) {
         eachProp(values, (value, key) => {
             if (!is.und(value))
-                this.mixings[key]?.set() // (value)
+                this.mixings[key]?.set(value)
         })
     }
 
-    // each (eachFn) {
-    //     each(this.queue, eachFn)
-    //     return this
-    // }
+    each (eachFn=()=>{}) {
+        each(this.queue, eachFn)
+        return this
+    }
 
     resume (keys?: string | string[]) {
         if (is.und(keys))

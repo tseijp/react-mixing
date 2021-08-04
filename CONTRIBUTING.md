@@ -1,3 +1,3 @@
-# Contributing to `parsed-path`
+# Contributing to `react-mixing`
 
 ### [TODO]

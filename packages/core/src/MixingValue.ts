@@ -35,7 +35,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         if (!is.und(arg1) || !is.und(arg2)) {
             const to = is.obj(arg1)
                 ? {...arg1}
-                : {...arg2, from: arg1}
+                : {...arg2, on: arg1}
             this.start(to)
         }
     }
@@ -52,9 +52,9 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         let {synth: $} = this
         let {config, context, toValues} = $
 
-        each($.values, (node, i) => {
-            if (node.done) return
-
+        each($.values, (value, i) => {
+            if (value.done) return
+            
         })
     }
 
@@ -116,17 +116,17 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
 
     protected _prepare(props: any) {
         const key = this.key || ''
-        let { to, from } = props
+        let { to, on } = props
 
-        from = is.obj(from)? from[key] : from
+        on = is.obj(on)? on[key] : on
         to = is.obj(to)? to[key] : to
-        if (from == null)
-            from = undefined
+        if (on == null)
+            on = undefined
         if (to == null || is.fun(to))
             to = undefined
 
-        const range = { to, from }
-        this._set(getSynthed(this)? to: from)
+        const range = { to, on }
+        this._set(getSynthed(this)? to: on)
         return range
     }
 
@@ -141,20 +141,18 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
             return resolve({value: this, canceled: true, finished:false})
         }
         const { key, defaultProps, synth: $ } = this
-        const { to: prevTo, from: prevFrom } = $
-        let { to = prevTo, from = prevFrom } = range
-        if (props.reverse) [to, from] = [from, to]
+        const { to: prevTo, on: prevOn } = $
+        let { to = prevTo, on = prevOn } = range
+        if (props.reverse) [to, on] = [on, to]
 
-        from = getFluidValue(from)
-        const isFromUndefined = is.und(prevFrom),
-                isToUndefined = is.und(prevTo),
-               hasFromChanged = !is(from, prevFrom),
-                 hasToChanged = !is(to, prevTo)
+        on = getFluidValue(on)
+        const hasOnChanged = !is(on, prevOn),
+              hasToChanged = !is(to, prevTo)
 
         if (hasToChanged)
             this._focus(to)
 
-        if (hasFromChanged)
-            $.from = from
+        if (hasOnChanged)
+            $.on = on
     }
 }

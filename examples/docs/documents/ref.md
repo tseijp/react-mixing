@@ -1,3 +1,32 @@
+### TODO
+```ts
+SynthedValue('osc'): {
+    _node: AudioNode,
+    _parents: Set<SynthedValue<T>>,
+    effect (on, to): () => void,
+    
+    on: () => void,
+    to: () => void
+}
+
+MixingValue (node='osc'): {get: () => value, advance: dt => {}, synth: Synthesis (): {
+    onValues: node[], // number[],
+    toValues: node[], // number[]
+    values: SynthedValue[], // AnimatedValue[]
+    on: SynthedValue<T>, // T | FluidValue<T>
+    to: SynthedValue<T>, // T | FluidValue<T>
+    config: new Config(),
+}
+
+<Mixing
+    on={{x: 'osc', y: MixingValue('gain')}} as {[string]: OnMixingValue}
+    to={{x: mixing => mixing.y} as {[string]: ToMixingValue}}
+>
+{mixing => <a.div style={mixing}></a.div>}
+</Mixing>
+```
+
+
 ### Track
 
 ```

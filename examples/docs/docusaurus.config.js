@@ -10,9 +10,7 @@ module.exports = {
   organizationName: 'tseijp',
   projectName: 'react-mixing',
   themeConfig: {
-    prism: {
-      theme: require('prism-react-renderer/themes/vsDark'),
-    },
+    prism: {theme: require('prism-react-renderer/themes/vsDark')},
     navbar: {
       title: 'react mixing 🤞',
       items: [
