@@ -87,11 +87,13 @@ export function App () {
         // osc.set({type: cfg.type.toLowerCase()})
         // dly.set({frequency: nextPads[0], delayTime:  cfg.delay? cfg.bpm / 2000: 0})
         // vca.set({gain: 1})
+        // osc -> vca.to() -> dly.to()
         osc.node.type = cfg.type.toLowerCase();
         osc.node.frequency.value = nextPads[0]
         dly.node.delayTime.value = cfg.delay? cfg.bpm / 2000: 0;
-        vca.node.gain.value = 1;
-        vca.to().effect(osc, dly.to()) // !!!
+        vca.node.gain.value = 1
+        osc.to(vca.to(dly.to()).to()).on()
+        // osc.effect(vca.effect(dly.to()).to(), true)
         setTimeout(() => {
             vca.node.gain.setTargetAtTime(0, ctx.currentTime, 0.015)
         }, cfg.release)

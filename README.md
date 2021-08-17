@@ -41,9 +41,12 @@ yarn start
 
 ### Documentation and Examples
 
-More info about the project can be found [here](https://tseijp.github.io/react-mixing/documents/intro.md).
+More info about the project can be found [here][documents].
 
-Examples and tutorials can be found [here](https://tseijp.github.io/react-mixing/examples/intro.md).
+Examples and tutorials can be found [here][examples].
+
+[documents]: https://tseijp.github.io/react-mixing/documents/intro.md
+[examples]: https://tseijp.github.io/react-mixing/examples/intro.md
 
 <br/>
 <hr/>

@@ -12,10 +12,10 @@ import {SynthedValue} from 'react-mixing/src'
 <Live.Card scope={{React, SynthedValue}} code={`
 const osc = SynthedValue()
 const vca = SynthedValue()
+const dly = SynthedValue()
 const handle = () => {
     const ctx = new AudioContext()
-    vca.effect(osc, ctx.destination)
-    osc.on()
+    osc.to(vca.to(dly.to()).to(), true)
 }
 render (
   <button onClick={handle}>

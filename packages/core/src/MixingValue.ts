@@ -45,7 +45,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         this._set(value)
     }
 
-    advance () {
+    advance (dt=0) {
         let idle = false
         let changed = false
 
@@ -54,7 +54,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
 
         each($.values, (value, i) => {
             if (value.done) return
-            
+
         })
     }
 

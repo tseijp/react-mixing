@@ -27,7 +27,8 @@ export function useSynthed (Component: any, props: any, ref: any) {
 
     useOnce(() => void ($.context = context))
     useOnce(() => void ($.set(tags, ...args)))
-    useEffect(() => $.effect(on, to), [on, to])
+    useEffect(() => $.on(on), [on])
+    useEffect(() => $.to(to), [on])
 
     return createElement(props.as || 'div', { ...other, ref}, children($))
 }

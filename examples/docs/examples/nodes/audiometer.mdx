@@ -46,27 +46,25 @@ export function useAudioMeter (canvasRef, streamRef, onChange=(...args) => {}) {
              * init mcr -> anl -> src -> dest
              */
             const ctx = new AudioContext(),
-                  anl = new SynthedValue().set(ctx.createAnalyser()),
-                  mcr = new SynthedValue().set(ctx.createMediaStreamSource(stream)),
-                  scr = new SynthedValue().set(ctx.createScriptProcessor(2048, 1, 1));
+                  anl = new SynthedValue(ctx.createAnalyser()),
+                  mcr = new SynthedValue(ctx.createMediaStreamSource(stream)),
+                  scr = new SynthedValue(ctx.createScriptProcessor(2048, 1, 1));
             anl.node.smoothingTimeConstant = 0.8;
             anl.node.fftSize = 1024;
-            mcr.resumed(anl);
-            anl.resumed(scr.to());
-            //
-            const canvasContext = canvasRef.current?.getContext?.("2d");
+            anl.effect()
+            // mcr.resumed(anl);
+            // anl.resumed(scr.to());
+            mcr.to(anl.to(src.to())).on()
+            const canvas = canvasRef.current?.getContext?.("2d");
             scr.node.addEventListener("audioprocess", () => {
                 const array = new Uint8Array(anl.node.frequencyBinCount);
                 anl.node.getByteFrequencyData(array);
-                let values = 0;
-                for (let i = 0; i < array.length; i++)
-                    values += array[i];
-                const average = values / array.length;
+                const average = array.reduce((a, c) => a + c) / array.length
                 const range = Math.max(0, Math.min(48 - average * (48 / 100), 48));
-                if (!canvasContext) return
-                canvasContext.clearRect(0, 0, 48, 48);
-                canvasContext.fillStyle = "#BadA55";
-                canvasContext.fillRect(0, range, 48, 48);
+                if (!canvas) return
+                canvas.clearRect(0, 0, 48, 48);
+                canvas.fillStyle = "#BadA55";
+                canvas.fillRect(0, range, 48, 48);
             });
         }, err => console.log(err)); // end fn stream
     }, [on, canvasRef]); // end useEffect
