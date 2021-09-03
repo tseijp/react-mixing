@@ -32,7 +32,7 @@ export class Controller<T extends Lookup = Lookup> {
 
     private _flush?: ControllerFlushFn<this>
     private _lastAsyncId = 0
-    private _active = new Set<MixingValue>()
+    private active = new Set<MixingValue>()
     private _changed = new Set<MixingValue>()
     private _started = false
     private _item?: any
@@ -116,7 +116,7 @@ export class Controller<T extends Lookup = Lookup> {
 
     _onFrame () {
         const {onStart, onChange, onRest} = this._events
-        const active = this._active.size > 0
+        const active = this.active.size > 0
         const changed = this._changed.size > 0
         const idle = !active && this._started
         const values = changed || (idle && onRest.size)? this.get(): null
@@ -149,9 +149,9 @@ export class Controller<T extends Lookup = Lookup> {
         if (event.type == 'change') {
             this._changed.add(event.parent)
             if (!event.idle)
-                this._active.add(event.parent)
+                this.active.add(event.parent)
         } else if (event.type == 'idle') {
-            this._active.delete(event.parent)
+            this.active.delete(event.parent)
         } else return
         raf.onFrame(this._onFrame)
     }
