@@ -1,7 +1,7 @@
+import { SynthedNode } from './nodes'
 import { Config } from './Config'
-import { Context } from './Context'
-import { FluidValue } from './utils'
-import { SynthedValue } from './nodes'
+
+const emptyArray: readonly any[] = []
 
 export class Synthesis<T = any> {
     idle = false
@@ -11,13 +11,12 @@ export class Synthesis<T = any> {
     resumeQueue = new Set()
 
     changed = false
-    readonly values: SynthedValue[] = []
-    readonly toValues: number[] | null = null
-    readonly onValues: number[] = []
+    values: readonly SynthedNode[] = emptyArray
+    toValues: readonly number[] | null = null
+    fromValues: readonly number[] = emptyArray
 
-    to!: T | FluidValue<T>
-    on!: T | FluidValue<T>
+    to!: T
+    from!: T
     config = new Config()
-    context = new Context()
     immediate = false
 }

@@ -1,73 +1,81 @@
-import React, {useEffect, createElement} from 'react'
-import {SynthedValue} from './SynthedValue'
-import {node} from './constructors'
-import {is, each, useOnce} from '../utils'
-import {Tag, Construct, Config} from './constructors'
+import React, {useEffect} from 'react'
+import {SynthedNode} from './SynthedNode'
+import {is, each} from '../utils'
+import {Tag, Construct, Options} from './constructors'
 
 export type AudioProps = {
     ref: React.Ref<Element>
     args: any[]
     reverse: boolean
     immediate: boolean,
-    destinate: boolean,
-    on: boolean | SynthedValue[],
-    to: boolean | SynthedValue[],
-    children: null | JSX.Element | ((synthedValue: SynthedValue) => null | JSX.Element)
+    destination: boolean,
+    children: null | JSX.Element | ((synthedNode: SynthedNode) => null | JSX.Element)
 }
 
-export function useSynthed (
+function useSynthedAudio (
     Component: Component,
     props: AudioProps,
     ref?: React.Ref<Element>
 ): null | JSX.Element
 
-export function useSynthed (Component: any, props: any, ref: any) {
-    const {tags=[], synthedValue: $} = Component
-    let {args=[], on=[], to=[], context, children, ...other} = props
+function useSynthedAudio (Component: any, props: any, ref: any) {
+    const {args=[], from=[], to=[], immediate, destinate, context, children, ...other} = props
+    const {tags=[], synthedNode: _} = Component
 
-    useOnce(() => void ($.context = context))
-    useOnce(() => void ($.set(tags, ...args)))
-    useEffect(() => $.on(on), [on])
-    useEffect(() => $.to(to), [on])
+    const propsForElement = { ...other, ref }
+    const elementToBeMade = props.as || 'div'
 
-    return createElement(props.as || 'div', { ...other, ref}, children($))
+    const nextChildren = React.useMemo(() => {
+        _.context = context
+        _.set(tags, ...args)
+        if (is.fun(children)) return children(_)
+        const childs = Array.prototype.concat(children, to)
+        each(childs, child => child?.type?.synthedNode?.parents.add(_))
+        each(from, parent => _.parents.add(parent))
+        return children
+    }, [context, _, tags, args, from, to, children])
+
+    useEffect(() => _.destinate(destinate), [_, destinate])
+    useEffect(() => _.immediate(immediate), [_, immediate])
+
+    return React.createElement(elementToBeMade, propsForElement, nextChildren)
 }
 
 export interface Component extends Construct {
     tags?: Tag<Component>,
     attrs?: Attr[],
-    config?: Config,
-    synthedValue?: SynthedValue,
+    config?: Options,
+    synthedNode?: SynthedNode,
     displayName?: string | null,
 }
 
 export function withSynthed (
-    config: Config,
+    options: Options,
     tags: Set<Component>
 ): Component
 
-export function withSynthed (config: any, tags: any) {
+export function withSynthed (options: any, tags: any) {
     const [tag] = tags,
         isSynthed = !is.str(tag) && is.str(tag?.displayName),
         displayName = getDisplayName(tag) || 'Anonymous',
         attrs = isSynthed && tag.attrs
-            ? Array.prototype.concat(tag.attrs, config.attrs).filter(Boolean)
-            : config.attrs || []
+            ? Array.prototype.concat(tag.attrs, options.attrs).filter(Boolean)
+            : options.attrs || []
 
-    const synthedValue = new SynthedValue()
+    const synthedNode = new SynthedNode()
 
     let Component: Component
 
-    function Render (props: any, ref: any) {
-        return useSynthed(Component, props, ref)
+    function render (props: any, ref: any) {
+        return useSynthedAudio(Component, props, ref)
     }
 
-    Component = React.forwardRef(Render) as unknown as Component
+    Component = React.forwardRef(render) as unknown as Component
     Component.tags = tags
     Component.attrs = attrs
-    Component.config = config
+    Component.config = options
+    Component.synthedNode = synthedNode
     Component.displayName = displayName
-    Component.synthedValue = synthedValue
     Component.toString = () => `.${Component.displayName}`;
 
     return Component

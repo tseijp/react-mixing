@@ -24,7 +24,7 @@ const initState = {
 
 export class MixingValue <T extends any = any> extends FrameValue<T> {
     key?: string
-    synth = new Synthesis()
+    synthesis = new Synthesis()
     queue: MixingUpdate<T>[] = []
     defaultProps = {}
 
@@ -35,7 +35,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         if (!is.und(arg1) || !is.und(arg2)) {
             const to = is.obj(arg1)
                 ? {...arg1}
-                : {...arg2, on: arg1}
+                : {...arg2, from: arg1}
             this.start(to)
         }
     }
@@ -45,16 +45,10 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
         this._set(value)
     }
 
-    advance (dt=0) {
-        let idle = false
-        let changed = false
-
-        let {synth: $} = this
-        let {config, context, toValues} = $
-
-        each($.values, (value, i) => {
-            if (value.done) return
-
+    advance () {
+        const synth = this.synthesis
+        each(synth.values, (node, i) => {
+            // if (node.done) return
         })
     }
 
@@ -63,7 +57,7 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     resume () {
-        return this._update({pause: false})
+        return this._update({pause: true})
     }
 
     reset () {
@@ -82,11 +76,12 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     stop (cancel=false) {
-        const $ = this.synth
-        $.pauseQueue.clear()
-        $.resumeQueue.clear()
-        this._stop($.to, cancel)
+        const synth = this.synthesis
+        synth.pauseQueue.clear()
+        synth.resumeQueue.clear()
+        this._stop(synth.to, cancel)
     }
+
 
     protected _set (arg: T | FluidValue<T>): Synthed | undefined  {
         const value = getFluidValue(arg)
@@ -103,56 +98,55 @@ export class MixingValue <T extends any = any> extends FrameValue<T> {
     }
 
     protected _start (...args: any) {
-        const $ = this.synth
-        getSynthed(this)!.reset(getFluidValue($.to))
+        const synth = this.synthesis
+        getSynthed(this)!.reset(getFluidValue(synth.to))
+
     }
 
     protected _stop (...args: any) {
-
     }
 
     protected _focus (value: any) {
     }
 
-    protected _prepare(props: any) {
-        const key = this.key || ''
-        let { to, on } = props
-
-        on = is.obj(on)? on[key] : on
-        to = is.obj(to)? to[key] : to
-        if (on == null)
-            on = undefined
-        if (to == null || is.fun(to))
-            to = undefined
-
-        const range = { to, on }
-        this._set(getSynthed(this)? to: on)
-        return range
-    }
-
     protected _update (props: MixingProps<T>) {
-        const range = this._prepare(props)
+        const range = this._prepareNode(props)
         return new Promise(resolve => this._merge(range, props, resolve))
     }
 
     protected _merge (range: any, props: any, resolve: any) {
         if (props.cancel) {
             this.stop(true)
-            return resolve({value: this, canceled: true, finished:false})
+            return resolve(getCancelledResult(this))
         }
-        const { key, defaultProps, synth: $ } = this
-        const { to: prevTo, on: prevOn } = $
-        let { to = prevTo, on = prevOn } = range
-        if (props.reverse) [to, on] = [on, to]
-
-        on = getFluidValue(on)
-        const hasOnChanged = !is(on, prevOn),
-              hasToChanged = !is(to, prevTo)
-
+        const { key, defaultProps, synthesis: synth } = this
+        const { to: prevTo, from: prevFrom } = synth
+        let { to = prevTo, from = prevFrom } = range
+        if (props.reverse) [to, from] = [from, to]
+        from = getFluidValue(from)
+        const isFromUndefined = !is.und(prevFrom),
+                isToUndefined = !is.und(prevTo),
+               hasFromChanged = !is(from, prevFrom),
+                 hasToChanged = !is(to, prevTo)
         if (hasToChanged)
             this._focus(to)
+        if (hasFromChanged)
+            synth.from = from
+    }
 
-        if (hasOnChanged)
-            $.on = on
+    protected _prepareNode(props: any) {
+        const key = this.key || ''
+        let { to, from } = props
+
+        from = is.obj(from)? from[key] : from
+        to = is.obj(to)? to[key] : to
+        if (from == null)
+            from = undefined
+        if (to == null || is.fun(to))
+            to = undefined
+
+        const range = { to, from }
+        this._set(getSynthed(this)? to: from)
+        return range
     }
 }

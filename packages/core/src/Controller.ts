@@ -32,7 +32,7 @@ export class Controller<T extends Lookup = Lookup> {
 
     private _flush?: ControllerFlushFn<this>
     private _lastAsyncId = 0
-    private active = new Set<MixingValue>()
+    private _active = new Set<MixingValue>()
     private _changed = new Set<MixingValue>()
     private _started = false
     private _item?: any
@@ -73,10 +73,10 @@ export class Controller<T extends Lookup = Lookup> {
         })
     }
 
-    each (eachFn=()=>{}) {
-        each(this.queue, eachFn)
-        return this
-    }
+    // each (eachFn) {
+    //     each(this.queue, eachFn)
+    //     return this
+    // }
 
     resume (keys?: string | string[]) {
         if (is.und(keys))
@@ -116,7 +116,7 @@ export class Controller<T extends Lookup = Lookup> {
 
     _onFrame () {
         const {onStart, onChange, onRest} = this._events
-        const active = this.active.size > 0
+        const active = this._active.size > 0
         const changed = this._changed.size > 0
         const idle = !active && this._started
         const values = changed || (idle && onRest.size)? this.get(): null
@@ -149,10 +149,65 @@ export class Controller<T extends Lookup = Lookup> {
         if (event.type == 'change') {
             this._changed.add(event.parent)
             if (!event.idle)
-                this.active.add(event.parent)
+                this._active.add(event.parent)
         } else if (event.type == 'idle') {
-            this.active.delete(event.parent)
+            this._active.delete(event.parent)
         } else return
         raf.onFrame(this._onFrame)
     }
 }
+
+export function getMixings<T extends Lookup>(
+  ctrl: Controller<Lookup<any>>,
+  props?: ControllerUpdate<T> | ControllerUpdate<T>[]
+) {
+    const mixings = { ...ctrl.mixings }
+    if (props) {
+        each(concat(props), (props: any) => {
+            if (is.und(props.keys))
+                props = createUpdate(props)
+            if (!is.obj(props.to))
+                props = { ...props, to: undefined }
+            prepareMixings(mixings as any, props, key => {
+                return createMixing(key)
+            })
+        })
+    }
+    setMixings(ctrl, mixings)
+    return mixings
+}
+
+export function setMixings(
+    ctrl: Controller<Lookup<any>>,
+    mixings: MixingValue<UnknownProps>
+) {
+    for (const key in mixings) {
+        if (!(ctrl.mixings as any)[key]) {
+            (ctrl.mixings as any)[key] = mixings[key]
+            addFluidObserver(mixings[key], ctrl)
+        }
+    }
+}
+
+function createMixing(key: string, observer?: FluidObserver<MixingValue.Event>) {
+    const mixing = new MixingValue()
+    mixing.key = key
+    if (observer)
+        addFluidObserver(mixing, observer)
+    return mixing
+}
+
+function prepareMixings(
+    mixings: MixingValue,
+    props: ControllerQueue[number],
+    create: (key: string) => MixingValue
+) {
+    if (props.keys) {
+        each(props.keys, key => {
+            const mixing = mixings[key] || (mixings[key] = create(key))
+            mixing['_prepareNode'](props)
+        })
+    }
+}
+
+function createUpdate (...args: any) {}

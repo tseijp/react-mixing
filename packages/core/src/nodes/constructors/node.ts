@@ -1,36 +1,24 @@
 import {is} from '../../utils'
 import {
     interleave,
-    flatten,
     primitives
 } from '../utils'
 
 export type Rule<T = any> = T | T[] | Rule[]
 
-export type RuleSet<T = any> = Rule<T>[]
+export type RuleSet = Rule[]
 
-export function node <T = any>(
+export function node (
     rules: string[],
-    ...interpolations: RuleSet<T>
-): RuleSet<T>
+    ...interpolates: RuleSet
+): (ctx: AudioNode) => AudioNode
 
-// TODO
-// export function node (rules: any, ...interpolations: any[]) {
-//     if (rules.length == 1)
-//         rules = rules[0]
-//
-//     // if (is.str(tags))
-//     //     return (this._ctx as any || {})[`create${tags}`](...args)
-//
-//     // if (is.fun(tags))
-//     //     return tags(...args)
-//
-//     if (is.str(rules) && interpolations.length == 0)
-//         return flatten(rules)
-//
-//     return flatten(interleave(rules, interpolations))
-// }
+export function node (rules: any, ...interpolates: any[]) {
+    if (!is.len(0, interpolates))
+        rules = interleave(rules, interpolates)
 
-export function node (...args: any[]) {
-    return Array.prototype.concat([], args)
+    if (is.len(1, rules))
+        rules = rules[0]
+
+    return (ctx: AudioContext) => new GainNode(ctx)
 }

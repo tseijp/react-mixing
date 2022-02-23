@@ -1,7 +1,7 @@
 import {useMixings} from './useMixings'
+import {ControllerUpdate, MixingValues} from '../types'
 import {MixingRef} from '../MixingRef'
 import {MixingValue} from '../MixingValue'
-import {ControllerUpdate,  MixingValues} from '../types'
 
 export type UseMixingProps<Props extends object = any> = unknown & ControllerUpdate<Props>
 
