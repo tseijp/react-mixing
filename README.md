@@ -50,7 +50,7 @@ Examples and tutorials can be found [here][examples].
 
 <br/>
 <hr/>
-</br/>
+<br/>
 
 
 ### What does it look like?
@@ -243,3 +243,6 @@ render (
   <Noise destination/>
 )
 ```
+
+
+</details>
