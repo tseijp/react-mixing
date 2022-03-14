@@ -1,4 +1,14 @@
 {
+    "bugs": "https://github.com/tseijp/react-mixing/issues/",
+    "homepage": "https://tseijp.github.io/react-mixing/",
+    "repository": "https://github.com/tseijp/react-mixing/",
+    "description": "Cross-platform mixing engine for React",
+    "keywords": [
+        "hooks",
+        "react",
+        "audio",
+        "typescript"
+    ],
     "name": "@react-mixing/docs",
     "version": "1.0.0",
     "license": "MIT",

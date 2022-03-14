@@ -1,9 +1,17 @@
 {
+    "bugs": "https://github.com/tseijp/react-mixing/issues/",
+    "homepage": "https://tseijp.github.io/react-mixing/",
+    "repository": "https://github.com/tseijp/react-mixing/",
+    "description": "Cross-platform mixing engine for React",
+    "keywords": [
+        "hooks",
+        "react",
+        "audio",
+        "typescript"
+    ],
     "name": "react-mixing",
     "author": "tsei",
     "license": "MIT",
-    "private": false,
-    "sideEffect": false,
     "version": "0.1.0",
     "module": "index.js",
     "types": "index.d.ts",
@@ -14,24 +22,11 @@
         "index.d.ts",
         "index.cjs.js"
     ],
+    "private": false,
+    "sideEffect": false,
     "publishConfig": {
         "access": "public"
     },
-    "description": "Cross-platform mixing engine for React",
-    "homepage": "https://github.com/tseijp/react-mixing#readme",
-    "bugs": {
-        "url": "https://github.com/tseijp/react-mixing/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tseijp/react-mixing.git"
-    },
-    "keywords": [
-        "hooks",
-        "react",
-        "audio",
-        "typescript"
-    ],
     "dependencies": {
         "rafz": "^0.1.14"
     },
