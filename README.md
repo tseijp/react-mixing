@@ -1,4 +1,4 @@
-# React Mixing
+# 🍭react-mixing
 
 [![ version ](
     https://img.shields.io/npm/v/react-mixing)](
@@ -19,13 +19,13 @@
     https://badgen.net/npm/license/react-mixing)](
     https://www.npmjs.com/package/react-mixing)
 
-### Installation
+## Installation
 
 ```shell
-npm install react-mixing
+npm i react-mixing
 ```
 
-### Quick started
+## Quick started
 
 ```shell
 git clone https://github.com/tseijp/react-mixing
@@ -38,8 +38,7 @@ yarn start
 - open browser and visit [localhost:3000](http://localhost:3000)
 - Now you can go to our [demo](http://tseijp.github.io/react-mixing/examples), and try its usage.
 
-
-### Documentation and Examples
+## Documentation and Examples
 
 More info about the project can be found [here][documents].
 
@@ -48,12 +47,12 @@ Examples and tutorials can be found [here][examples].
 [documents]: https://tseijp.github.io/react-mixing/documents/intro.md
 [examples]: https://tseijp.github.io/react-mixing/examples/intro.md
 
-<br/>
-<hr/>
-<br/>
+<br></br>
+<hr></hr>
+<br></br>
 
 
-### What does it look like?
+## What does it look like?
 
 ```js
 import React from 'react'
